@@ -1,0 +1,21 @@
+MACHINE_TYPE: MOORE
+NAME: mymachine
+
+INPUT_SIZE: 1
+
+STATE_DESC:
+STATE_0  gives  2
+STATE_1  gives  1
+STATE_2  gives  0
+
+
+#These are the state transistions
+transition:
+STATE_0  to  STATE_1 on 0
+STATE_0  to  STATE_2 on 1
+STATE_1  to  STATE_1 on 1
+STATE_1  to  STATE_2 on 0
+STATE_2  to  STATE_1 on 1
+STATE_2  to  STATE_0 on 0
+
+start: STATE_0

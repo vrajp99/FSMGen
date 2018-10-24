@@ -1,0 +1,10 @@
+`timescale 1ns / 1ps
+module {{modulename}} ({{signals}});
+{% for sigtype,sig in siglist %}{{sigtype}} {{sig}};
+{% endfor %}
+{% for par,parval in paralist %}parameter {{par}} = {{parval}};
+{% endfor %}
+{%for block in blocks%}
+{{block}}
+{%endfor%}
+endmodule

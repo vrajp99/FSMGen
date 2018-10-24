@@ -1,0 +1,27 @@
+MACHINE_TYPE: MOORE
+NAME: detect1011
+
+INPUT_SIZE: 1
+
+STATE_DESC:
+_0  gives  0
+_1  gives  0
+_10  gives 0
+_101 gives  0
+_1011  gives 1
+
+
+#These are the state transistions
+transition:
+_0  to  _1 on 1
+_1  to  _10 on 0
+_0 to  _0 on 0
+_1 to _1 on 1
+_10  to  _1 on 0
+_10  to  _101 on 1
+_101  to  _1011 on 1
+_101  to  _10 on 0
+_1011  to  _1 on 1
+_1011  to  _10 on 0
+
+start: _0

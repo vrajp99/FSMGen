@@ -1,0 +1,8 @@
+case({{sig}})
+	{%for state,code in matrix%}
+	{{state}}:begin
+	{{code}}
+	end
+	{%endfor%}
+	default: {{defleft}} <= {{defright}};
+endcase

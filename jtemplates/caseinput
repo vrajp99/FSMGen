@@ -1,0 +1,3 @@
+case({{sig}}){%for state,assright in matrix%}
+		{{state}}: {{next}} <= {{assright}};{%endfor%}
+	endcase
