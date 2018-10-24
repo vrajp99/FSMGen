@@ -1,0 +1,14 @@
+Input_size: 1
+
+Start: A
+
+State_Desc:
+A gives 0
+B gives 1
+
+Transition:
+A to B on 1
+A to A on 0
+B to A on 0
+B to B on 1
+

@@ -17,7 +17,7 @@ parser = Lark('''
 	MOORE: "MOORE"i
 	MEALEY: "MEALEY"i
 	WHITESPACE: " " | "\\t"
-	IDENTIFIER: /[A-Z_a-z]([A-Za-z0-9_])+/
+	IDENTIFIER: /[A-Z_a-z]([A-Za-z0-9_])*/
 	COMMENT: "#" /[^\\n]*/ _NEWLINE
 	_NEWLINE: /[\\n]+/
 	%ignore WHITESPACE
@@ -75,7 +75,7 @@ class FSMTransfomer(Transformer):
 
 #print(tree)
 res = FSMTransfomer().transform(tree)
-#print(res)
+print(res)
 
 def getifthere(dct,property,default=None):
 	return dct[property] if property in dct else default
@@ -116,8 +116,8 @@ def makeMoore(modname,inp_size,state_output,states,transition_matrix,start):
 	sigparams.append(('output reg',('' if binsizer(max_out)==1 else '['+str(binsizer(max_out)-1)+':0]')+'O'))
 	sigparams.append(('input','clk'))
 	sigparams.append(('input','reset'))
-	sigparams.append(('reg',('' if binsizer(len(states))==1 else '['+str(binsizer(len(states))-1)+':0]')+'state'))
-	sigparams.append(('reg',('' if binsizer(len(states))==1 else '['+str(binsizer(len(states))-1)+':0]')+'next_state'))
+	sigparams.append(('reg',('' if binsizer(len(states)-1)==1 else '['+str(binsizer(len(states))-1)+':0]')+'state'))
+	sigparams.append(('reg',('' if binsizer(len(states)-1)==1 else '['+str(binsizer(len(states))-1)+':0]')+'next_state'))
 	clockblockcode = '''
 		if(reset==1)
 			state <= {st};

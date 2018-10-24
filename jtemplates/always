@@ -1,4 +1,4 @@
-always @ ({{sensetivity}})
+always @({{sensetivity}})
 begin
 	{{code}}
 end
