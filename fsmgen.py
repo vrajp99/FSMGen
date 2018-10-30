@@ -155,7 +155,7 @@ def binarytoGray(binary):
 
 def encode(encodi, state_num, nstates):
     encodi = encodi.lower()
-    sbi = bin(nstates)[2:]
+    sbi = bin(nstates-1)[2:]
     bi = bin(state_num)[2:]
     if encodi == 'binary':
         return str(len(sbi)) + "'b" + '0' * (len(sbi) - len(bi)) + bi
