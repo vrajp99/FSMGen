@@ -145,12 +145,40 @@ def file_dump(flname, content):
         fl.write(content)
 
 
-def makeMoore(modname, inp_size, state_output, states, transition_matrix, start):
+def binarytoGray(binary):
+    gray = ""
+    gray += binary[0]
+    for i in range(1, len(binary)):
+        gray += str(int(binary[i - 1]) ^ int(binary[i]))
+    return gray
+
+
+def encode(encodi, state_num, nstates):
+    encodi = encodi.lower()
+    sbi = bin(nstates)[2:]
+    bi = bin(state_num)[2:]
+    if encodi == 'binary':
+        return str(len(sbi)) + "'b" + '0' * (len(sbi) - len(bi)) + bi
+    elif encodi == 'gray':
+        gi = binarytoGray(bi)
+        return str(len(sbi)) + "'b" + '0' * (len(sbi) - len(gi)) + gi
+    elif encodi == 'onehot':
+        oi = '0' * nstates
+        return str(nstates) + "'b" + oi[:nstates - state_num] + '1' + oi[nstates - state_num + 1:]
+    elif encodi == 'onecold':
+        oi = '1' * nstates
+        return str(nstates) + "'b" + oi[:nstates - state_num] + '0' + oi[nstates - state_num + 1:]
+    else:
+        return
+
+
+def makeMoore(modname, inp_size, state_output, states, transition_matrix, start, enc):
     parlist = []
     startname = ''
+    numstates = len(states)
     # creating parameter list for state encoding
-    for i in range(len(states)):
-        parlist.append((states[i], i))
+    for i in range(numstates):
+        parlist.append((states[i], encode(enc,i,numstates)))
         if states[i] == start:
             parlist.append((states[i] + '_start', i))
             startname = states[i] + '_start'
@@ -196,13 +224,14 @@ def makeMoore(modname, inp_size, state_output, states, transition_matrix, start)
     file_dump(modname + '.v', module)
 
 
-def makeMealy(modname, inp_size, transition_matrix, start):
+def makeMealy(modname, inp_size, transition_matrix, start, enc):
     parlist = []
     startname = ''
     states = list(transition_matrix.keys())
+    numstates = len(states)
     # creating parameter list for state encoding
-    for i in range(len(states)):
-        parlist.append((states[i], i))
+    for i in range(numstates):
+        parlist.append((states[i], encode(enc,i,numstates)))
         if states[i] == start:
             parlist.append((states[i] + '_start', i))
             startname = states[i] + '_start'
@@ -266,12 +295,12 @@ def makeFSM(**params):
         states = [i for i in state_output.keys()]
         transition_matrix = params['Transition']
         start = getifthere(params, 'Start', states[0])
-        makeMoore(modname, inp_size, state_output, states, transition_matrix, start)
+        makeMoore(modname, inp_size, state_output, states, transition_matrix, start, enc)
     else:
         inp_size = getifthere(params, 'Isize', 8)
         transition_matrix = params['Transition']
         start = getifthere(params, 'Start', list(transition_matrix.keys())[0])
-        makeMealy(modname, inp_size, transition_matrix, start)
+        makeMealy(modname, inp_size, transition_matrix, start, enc)
 
 
 makeFSM(**res)
