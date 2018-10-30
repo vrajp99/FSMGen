@@ -163,13 +163,13 @@ def encode(encodi, state_num, nstates):
         gi = binarytoGray(bi)
         return str(len(sbi)) + "'b" + '0' * (len(sbi) - len(gi)) + gi
     elif encodi == 'onehot':
-        oi = list('0' * (nstates-1))
-        oi.insert(nstates-state_num-1,'1')
+        oi = list('0' * (nstates - 1))
+        oi.insert(nstates - state_num - 1, '1')
         ois = ''.join(oi)
         return str(nstates) + "'b" + ois
     elif encodi == 'onecold':
-        oi = list('1' * (nstates-1))
-        oi.insert(nstates-state_num-1,'0')
+        oi = list('1' * (nstates - 1))
+        oi.insert(nstates - state_num - 1, '0')
         ois = ''.join(oi)
         return str(nstates) + "'b" + ois
     else:
@@ -196,10 +196,17 @@ def makeMoore(modname, inp_size, state_output, states, transition_matrix, start,
     sigparams.append(('output reg', ('' if binsizer(max_out) == 1 else '[' + str(binsizer(max_out) - 1) + ':0]') + 'O'))
     sigparams.append(('input', 'clk'))
     sigparams.append(('input', 'reset'))
-    sigparams.append(
-        ('reg', ('' if binsizer(len(states) - 1) == 1 else '[' + str(binsizer(len(states) - 1)) + ':0]') + 'state'))
-    sigparams.append(('reg', (
-        '' if binsizer(len(states) - 1) == 1 else '[' + str(binsizer(len(states) - 1)) + ':0]') + 'next_state'))
+    if enc not in {'ONEHOT', 'ONECOLD'}:
+        sigparams.append(
+            ('reg',
+             ('' if binsizer(len(states) - 1) == 1 else '[' + str(binsizer(len(states) - 1) - 1) + ':0]') + 'state'))
+        sigparams.append(('reg', (
+            '' if binsizer(len(states) - 1) == 1 else '[' + str(binsizer(len(states) - 1) - 1) + ':0]') + 'next_state'))
+    else:
+        sigparams.append(
+            ('reg', ('' if numstates == 1 else '[' + str(numstates - 1) + ':0]') + 'state'))
+        sigparams.append(('reg', (
+            '' if numstates == 1 else '[' + str(numstates - 1) + ':0]') + 'next_state'))
     clockblockcode = '''
 		if(reset==1)
 			state <= {st};
@@ -250,10 +257,16 @@ def makeMealy(modname, inp_size, states, transition_matrix, start, enc):
     sigparams.append(('output reg', ('' if binsizer(max_out) == 1 else '[' + str(binsizer(max_out) - 1) + ':0]') + 'O'))
     sigparams.append(('input', 'clk'))
     sigparams.append(('input', 'reset'))
-    sigparams.append(('reg', ('' if binsizer(len(transition_matrix) - 1) == 1 else '[' + str(
-        binsizer(len(transition_matrix) - 1) - 1) + ':0]') + 'state'))
-    sigparams.append(('reg', ('' if binsizer(len(transition_matrix) - 1) == 1 else '[' + str(
-        binsizer(len(transition_matrix) - 1) - 1) + ':0]') + 'next_state'))
+    if enc not in {'ONEHOT', 'ONECOLD'}:
+        sigparams.append(('reg', ('' if binsizer(numstates - 1) == 1 else '[' + str(
+            binsizer(numstates - 1) - 1) + ':0]') + 'state'))
+        sigparams.append(('reg', ('' if binsizer(numstates - 1) == 1 else '[' + str(
+            binsizer(numstates - 1) - 1) + ':0]') + 'next_state'))
+    else:
+        sigparams.append(
+            ('reg', ('' if numstates == 1 else '[' + str(numstates - 1) + ':0]') + 'state'))
+        sigparams.append(('reg', (
+            '' if numstates == 1 else '[' + str(numstates - 1) + ':0]') + 'next_state'))
     sigparams.append(
         ('reg', ('' if binsizer((max_out) - 1) == 1 else '[' + str(binsizer(max_out) - 1) + ':0]') + 'next_O'))
     clockblockcode = '''
