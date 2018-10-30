@@ -6,13 +6,20 @@ parser = Lark('''
 	?start: (block)+
 	block: machined
 		| inputsize 
-		| statedesc 
+		| statedesc
+		| statedescmealy 
 		| transdesc 
 		| transdescmealey
 		| name
 		| startstate
+		| encode_type
 	startstate: "START:"i IDENTIFIER _NEWLINE
 	name: "NAME:"i IDENTIFIER _NEWLINE
+	encodetype: "ENCODING"i (BIN|GRAY|OHOT|OCOLD) _NEWLINE
+	BIN: "BINARY"i
+	GRAY: "GRAY"i
+	OHOT: "ONEHOT"i
+	OCOLD: "ONECOLD"i
 	machined: "MACHINE_TYPE:"i (MOORE | MEALEY) _NEWLINE
 	MOORE: "MOORE"i
 	MEALEY: "MEALY"i
@@ -23,6 +30,8 @@ parser = Lark('''
 	%ignore WHITESPACE
 	%ignore COMMENT
 	statedesc: "STATE_DESC:"i _NEWLINE (state)+
+	statedescmealy: "STATE_DESC:"i _NEWLINE (statemealy)+
+	statemealy: IDENTIFIER _NEWLINE
 	state: IDENTIFIER " gives " NUMBER _NEWLINE
 	NUMBER: /[0-9]+/
 	inputsize: "INPUT_SIZE:"i NUMBER _NEWLINE
@@ -30,6 +39,7 @@ parser = Lark('''
 	transmealey: IDENTIFIER " to " IDENTIFIER " on "i NUMBER " gives "i NUMBER _NEWLINE
 	transdesc: "TRANSITION:"i _NEWLINE (trans)+
 	trans: IDENTIFIER " to " IDENTIFIER " on "i NUMBER _NEWLINE
+	
 	''')
 
 cmdparser = argparse.ArgumentParser(description='This is a Verilog FSM Code Generator')
@@ -59,6 +69,9 @@ class FSMTransfomer(Transformer):
     def machined(self, match):
         return ("Type", str(match[0]).upper())
 
+    def encodetype(self, match):
+        return ('Encoding', str(match[0]).upper())
+
     def block(self, match):
         return match[0]
 
@@ -70,6 +83,15 @@ class FSMTransfomer(Transformer):
 
     def state(self, match):
         return [str(match[0]), int(match[1])]
+
+    def statemealy(self, match):
+        return str(match[0])
+
+    def statedescmealy(self, matches):
+        dct = []
+        for match in matches:
+            dct.append(match)
+        return ('States', dct)
 
     def inputsize(self, match):
         return ('Isize', int(match[0]))
@@ -144,9 +166,9 @@ def makeMoore(modname, inp_size, state_output, states, transition_matrix, start)
     sigparams.append(('input', 'clk'))
     sigparams.append(('input', 'reset'))
     sigparams.append(
-        ('reg', ('' if binsizer(len(states) - 1) == 1 else '[' + str(binsizer(len(states)) - 1) + ':0]') + 'state'))
+        ('reg', ('' if binsizer(len(states) - 1) == 1 else '[' + str(binsizer(len(states) - 1)) + ':0]') + 'state'))
     sigparams.append(('reg', (
-        '' if binsizer(len(states) - 1) == 1 else '[' + str(binsizer(len(states)) - 1) + ':0]') + 'next_state'))
+        '' if binsizer(len(states) - 1) == 1 else '[' + str(binsizer(len(states) - 1)) + ':0]') + 'next_state'))
     clockblockcode = '''
 		if(reset==1)
 			state <= {st};
@@ -198,9 +220,12 @@ def makeMealy(modname, inp_size, transition_matrix, start):
     sigparams.append(('output reg', ('' if binsizer(max_out) == 1 else '[' + str(binsizer(max_out) - 1) + ':0]') + 'O'))
     sigparams.append(('input', 'clk'))
     sigparams.append(('input', 'reset'))
-    sigparams.append(('reg', ('' if binsizer(len(transition_matrix) - 1) == 1 else '[' + str(binsizer(len(transition_matrix) - 1)-1) + ':0]') + 'state'))
-    sigparams.append(('reg', ('' if binsizer(len(transition_matrix) - 1) == 1 else '[' + str(binsizer(len(transition_matrix) - 1)-1) + ':0]') + 'next_state'))
-    sigparams.append(('reg', ('' if binsizer((max_out) - 1) == 1 else '[' + str(binsizer(max_out) - 1) + ':0]') + 'next_O'))
+    sigparams.append(('reg', ('' if binsizer(len(transition_matrix) - 1) == 1 else '[' + str(
+        binsizer(len(transition_matrix) - 1) - 1) + ':0]') + 'state'))
+    sigparams.append(('reg', ('' if binsizer(len(transition_matrix) - 1) == 1 else '[' + str(
+        binsizer(len(transition_matrix) - 1) - 1) + ':0]') + 'next_state'))
+    sigparams.append(
+        ('reg', ('' if binsizer((max_out) - 1) == 1 else '[' + str(binsizer(max_out) - 1) + ':0]') + 'next_O'))
     clockblockcode = '''
 	if(reset==1) begin
 		state <= {st};
@@ -218,7 +243,7 @@ def makeMealy(modname, inp_size, transition_matrix, start):
     for i in states:
         stateinputs = transition_matrix[i]
         tci = template_caseinput_mealy.render(sig='w', next='next_state', next_out='next_O',
-                                        matrix=list(stateinputs.items()) + [('default', ['state','O'])])
+                                              matrix=list(stateinputs.items()) + [('default', ['state', 'O'])])
         stateblockmatrix.append((i, tci))
     # print(stateblockmatrix)
     caseblock = template_case.render(sig='state', matrix=stateblockmatrix, defleft='next_state', defright='state')
@@ -234,6 +259,7 @@ def makeFSM(**params):
     modname = getifthere(params, 'Name', 'FSMmodule')
     # print(modname)
     typ = getifthere(params, 'Type', 'MOORE')
+    enc = getifthere(params, 'Encoding', 'BINARY')
     if typ == "MOORE":
         inp_size = getifthere(params, 'Isize', 8)
         state_output = params['States']
