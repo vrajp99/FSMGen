@@ -1,6 +1,13 @@
 MACHINE_TYPE: MEALY
 
 INPUT_SIZE: 1
+encoding: onehot
+State_desc:
+a
+b
+c
+d
+e
 
 TRANSITION:
 a to a on 0 gives 0
