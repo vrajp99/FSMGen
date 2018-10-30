@@ -165,6 +165,28 @@ def makeMealy(modname, inp_size, states, transition_matrix, start,enc):
                                     paralist=parlist, blocks=[clockblockfinal, alwaystransition])
     file_dump(modname + '.v', module)
 
+def testbench(modname,testin):
+    code = ''
+    code += "`timescale 1ns/1ps\n"
+    code += "module tb_"+str(modname)+"();\n"
+    code += "reg w,clk,reset;\n"
+    code += "wire O;\n"
+    code += modname+" m1(w,clk,reset,O);\n"
+    code += "initial\n"
+    code += "begin\n"
+    code += "reset=1;w=0;\n#1 clk=0;\n"
+    code += "#9 reset=0;\n"
+    code += '''$monitor($time, , ,"clk=%b",clk,,"O=%b",O,,"reset=%b",reset,,"w=%b",w);\n'''
+    for i in testin:
+      code += "#10 w="+i+";\n"
+    code += "end\n"
+    code += "always\n"
+    code += "#5 clk=~clk;\n"
+    code += "initial\n"
+    code += "#100 $finish ;\n"
+    code += "endmodule\n"
+    file_dump("tb_"+modname+'.v',code)
+
 
 def makeFSM():
     print("type either 'moore' or 'mealy' :")
@@ -180,6 +202,8 @@ def makeFSM():
     modname = input()
     print("Encoding: binary, gray, onehot, oncold -")
     enc = input()
+    print("Enter testing sequence: ")
+    testin = input()
     inp_size = 1
     if moore_or_mealy=='moore':
       d={}
@@ -289,6 +313,6 @@ def makeFSM():
       start = states[0]
       #so this prints the state description
       makeMealy(modname, inp_size, states, transition_matrix, start,enc)
-
+    testbench(modname,testin)
 
 makeFSM()
