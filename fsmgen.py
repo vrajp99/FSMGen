@@ -15,7 +15,7 @@ parser = Lark('''
 		| encode_type
 	startstate: "START:"i IDENTIFIER _NEWLINE
 	name: "NAME:"i IDENTIFIER _NEWLINE
-	encodetype: "ENCODING:"i (BIN|GRAY|OHOT|OCOLD) _NEWLINE
+	encode_type: "ENCODING:"i (BIN|GRAY|OHOT|OCOLD) _NEWLINE
 	BIN: "BINARY"i
 	GRAY: "GRAY"i
 	OHOT: "ONEHOT"i
@@ -69,7 +69,7 @@ class FSMTransfomer(Transformer):
     def machined(self, match):
         return ("Type", str(match[0]).upper())
 
-    def encodetype(self, match):
+    def encode_type(self, match):
         return ('Encoding', str(match[0]).upper())
 
     def block(self, match):
