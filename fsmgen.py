@@ -223,10 +223,9 @@ def makeMoore(modname, inp_size, state_output, states, transition_matrix, start,
     file_dump(modname + '.v', module)
 
 
-def makeMealy(modname, inp_size, transition_matrix, start, enc):
+def makeMealy(modname, inp_size, states, transition_matrix, start, enc):
     parlist = []
     startname = ''
-    states = list(transition_matrix.keys())
     numstates = len(states)
     # creating parameter list for state encoding
     for i in range(numstates):
@@ -296,8 +295,9 @@ def makeFSM(**params):
     else:
         inp_size = getifthere(params, 'Isize', 8)
         transition_matrix = params['Transition']
+        states = params['States']
         start = getifthere(params, 'Start', list(transition_matrix.keys())[0])
-        makeMealy(modname, inp_size, transition_matrix, start, enc)
+        makeMealy(modname, inp_size, states, transition_matrix, start, enc)
 
 
 makeFSM(**res)
