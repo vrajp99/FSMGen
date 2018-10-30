@@ -15,7 +15,7 @@ parser = Lark('''
 		| encode_type
 	startstate: "START:"i IDENTIFIER _NEWLINE
 	name: "NAME:"i IDENTIFIER _NEWLINE
-	encodetype: "ENCODING"i (BIN|GRAY|OHOT|OCOLD) _NEWLINE
+	encodetype: "ENCODING:"i (BIN|GRAY|OHOT|OCOLD) _NEWLINE
 	BIN: "BINARY"i
 	GRAY: "GRAY"i
 	OHOT: "ONEHOT"i
