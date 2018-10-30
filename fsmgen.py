@@ -163,11 +163,15 @@ def encode(encodi, state_num, nstates):
         gi = binarytoGray(bi)
         return str(len(sbi)) + "'b" + '0' * (len(sbi) - len(gi)) + gi
     elif encodi == 'onehot':
-        oi = '0' * nstates
-        return str(nstates) + "'b" + oi[:nstates - state_num] + '1' + oi[nstates - state_num + 1:]
+        oi = list('0' * (nstates-1))
+        oi.insert(nstates-state_num-1,'1')
+        ois = ''.join(oi)
+        return str(nstates) + "'b" + ois
     elif encodi == 'onecold':
-        oi = '1' * nstates
-        return str(nstates) + "'b" + oi[:nstates - state_num] + '0' + oi[nstates - state_num + 1:]
+        oi = list('1' * (nstates-1))
+        oi.insert(nstates-state_num-1,'0')
+        ois = ''.join(oi)
+        return str(nstates) + "'b" + ois
     else:
         return
 
