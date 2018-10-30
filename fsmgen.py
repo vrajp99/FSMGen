@@ -178,10 +178,9 @@ def makeMoore(modname, inp_size, state_output, states, transition_matrix, start,
     numstates = len(states)
     # creating parameter list for state encoding
     for i in range(numstates):
-        parlist.append((states[i], encode(enc,i,numstates)))
+        parlist.append((states[i], encode(enc, i, numstates)))
         if states[i] == start:
-            parlist.append((states[i] + '_start', i))
-            startname = states[i] + '_start'
+            startname = states[i]
     max_out = 0
     for i in state_output:
         max_out = max(max_out, state_output[i])
@@ -231,10 +230,9 @@ def makeMealy(modname, inp_size, transition_matrix, start, enc):
     numstates = len(states)
     # creating parameter list for state encoding
     for i in range(numstates):
-        parlist.append((states[i], encode(enc,i,numstates)))
+        parlist.append((states[i], encode(enc, i, numstates)))
         if states[i] == start:
-            parlist.append((states[i] + '_start', i))
-            startname = states[i] + '_start'
+            startname = states[i]
     max_out = 0
     for i in states:
         val = 0
@@ -259,7 +257,6 @@ def makeMealy(modname, inp_size, transition_matrix, start, enc):
 	if(reset==1) begin
 		state <= {st};
         O <= 0;
-        O
     end
 	else begin
 		state <= next_state;
