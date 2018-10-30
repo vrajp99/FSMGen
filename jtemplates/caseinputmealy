@@ -1,0 +1,6 @@
+case({{sig}}){%for state,assright in matrix%}
+		{{state}}: begin
+			{{next_out}} <= {{assright[1]}};
+			{{next}} <= {{assright[0]}};
+		end{%endfor%}
+		endcase
