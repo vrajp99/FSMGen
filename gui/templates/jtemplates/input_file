@@ -1,0 +1,16 @@
+MACHINE_TYPE: {{type}}
+NAME: {{name}}
+
+{% if input_size %}INPUT_SIZE: {{input_size}}{% endif %}
+ENCODING: {{encoding}}
+
+STATE_DESC:
+{% for state0 in states %}{{ state0 }} gives {{ states[state0] }}
+{% endfor %}
+
+
+#These are the state transitions
+TRANSITION:
+{% for state in transitions %}{% for input in transitions[state] %}
+{{ state }}  to  {{ transitions[state][input] }} on {{ input }}{% endfor %}
+{% endfor %}

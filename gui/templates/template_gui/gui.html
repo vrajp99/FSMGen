@@ -1,0 +1,129 @@
+{% load static  %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <title>PyFSM</title>
+    <link rel="stylesheet" href="{% static 'style.css' %}"/>
+    <script src="{% static 'scripti.js' %}" > </script>
+</head>
+<body>
+<h1 id="head">
+    <center>PyFSM</center>
+</h1>
+<form action="/gui/file_upload/" enctype="multipart/form-data" method="post">
+    <input type="file" name="file" /><br>
+    <button type="submit" class="btn btn-default">Submit</button>
+    <br><br>
+    OR<br><br>
+</form>
+<form action="/gui/submit/" method="post">
+    <div class="dropdown">
+        <label>Machine Type:</label>
+        <select class="styled-select.slate" id="select" name="type">
+            <option value="Moore" selected="selected">Moore Machine</option>
+            <option value="Mealy">Mealy Machine</option>
+        </select>
+    </div>
+    <button type="button" class="btn btn-default" onclick="select_type()">Select</button>
+    <div id="moore" style="display: none;">
+        <div class="form-group">
+            <label class="control-label">Name of the module:</label> <input type="text" id="name" name="name"
+                                                                            placeholder="Module Name">
+        </div>
+        <div class="dropdown">
+            <label>Encoding:</label>
+            <select class="styled-select.slate" name="encoding">
+                <option value="binary" selected="selected">Binary Encoding</option>
+                <option value="gray">Gray Encoding</option>
+                <option value="onehot">One Hot Encoding</option>
+                <option value="onecold">One Cold Encoding</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label class="control-label">Input Size:</label> <input type="text" id="input_size" name="input_size">
+        </div>
+        <div id="state_container">
+            <h3>State Description</h3>
+            <div name="0" id = "moore_0">
+                <p><input type="text" name="state_name0" placeholder="State Name"> gives <input type="text"
+                                                                                                name="state_output0"
+                                                                                                placeholder="State Output">
+                </p>
+            </div>
+        </div>
+        <button type="button" style="width: 10%" class="btn btn-default" onclick="func('moore')">Add State
+        </button>
+        <div id="transition_container">
+            <h3>Transition Description</h3>
+            <div name="0" id = "tmoore_0">
+                <p><input type="text" name="state0" placeholder="Present State"> to <input type="text"
+                                                                                           name="next_state0"
+                                                                                           placeholder="Next State"> on
+                    <input type="text" name="input0" placeholder="Input"></p>
+            </div>
+        </div>
+        <button type="button" style="width: 10%" class="btn btn-default" onclick="funci('moore')">Add
+            Transition
+        </button>
+        <br><br>
+        <div class="form-group">
+            <label class="control-label">Start/Reset State:</label> <input type="text" id="start" name="start">
+        </div>
+        <br>
+        <button type="submit" class="btn btn-default">Submit</button>
+    </div>
+    <div id="mealy" style="display: none;">
+        <div class="form-group">
+            <label class="control-label">Name of the module:</label> <input type="text" id="mname" name="mname"
+                                                                            placeholder="Module Name">
+        </div>
+        <div class="dropdown">
+            <label>Encoding:</label>
+            <select class="styled-select.slate" name="mencoding">
+                <option value="binary" selected="selected">Binary Encoding</option>
+                <option value="gray">Gray Encoding</option>
+                <option value="onehot">One Hot Encoding</option>
+                <option value="onecold">One Cold Encoding</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label class="control-label">Input Size:</label> <input type="text" id="minput_size" name="minput_size">
+        </div>
+        <div id="mstate_container">
+            <h3>State Description</h3>
+            <div name="0" id = "mealy_0">
+                <p><input type="text" name="mstate_name0" placeholder="State Name"></p>
+            </div>
+        </div>
+        <button type="button" style="width: 10%" class="btn btn-default" onclick="func('mealy')">Add State
+        </button>
+        <div id="mtransition_container">
+            <h3>Transition Description</h3>
+            <div id = "tmealy_0" name="0">
+                <p><input type="text" name="mstate0" placeholder="Present State"> to <input type="text"
+                                                                                            name="mnext_state0"
+                                                                                            placeholder="Next State"> on
+                    <input type="text" name="minput0" placeholder="Input"> gives <input type="text" name="moutput0"
+                                                                                        placeholder="Output"></p>
+            </div>
+        </div>
+        <button type="button" style="width: 10%" class="btn btn-default" onclick="funci('mealy')">Add
+            Transition
+        </button>
+        <br><br>
+        <div class="form-group">
+            <label class="control-label">Start/Reset State:</label> <input type="text" id="mstart" name="mstart">
+        </div>
+        <!-- <button type="button" id="constraints_button" style="width: 10%" class="btn btn-default" onclick="add_constraints()">Add Constraints</button> -->
+        
+        <br>
+        <button type="submit" class="btn btn-default">Submit</button>
+    </div>
+</form>
+</body>
+</html>

@@ -1,6 +1,8 @@
 from lark import Lark, Transformer
-import argparse
-from jinja2 import Environment, FileSystemLoader
+from django.shortcuts import render, redirect
+from django.views.decorators.csrf import csrf_exempt
+from jinja2 import FileSystemLoader, Environment
+from django.core.files.storage import FileSystemStorage
 
 parser = Lark('''
 	?start: (block)+
@@ -41,19 +43,23 @@ parser = Lark('''
 	transdesc: "TRANSITION:"i _NEWLINE (trans)+
 	trans: IDENTIFIER " to " IDENTIFIER " on "i NUMBER _NEWLINE
     IDENTIFIER1: /[A-Z_a-z]([A-Za-z0-9_])*(\\[[0-9]+\\])?/
-    sigdesc: "connect" IDENTIFIER1 "with" IDENTIFIER1 _NEWLINE
+    sigdesc: "CONSTRAINTS:"i _NEWLINE (sig)+
+    sig: "connect" IDENTIFIER1 "with" IDENTIFIER1 _NEWLINE
 	
 	''')
 
-cmdparser = argparse.ArgumentParser(description='This is a Verilog FSM Code Generator')
-cmdparser.add_argument('file', help='Filename')
-args = cmdparser.parse_args()
+env = Environment(
+    loader=FileSystemLoader('C:/Users/Kishen/Desktop/digitalproject/digitalproject/gui/templates/jtemplates/',
+                            followlinks=True))
+template_always = env.get_template('always')
+template_module = env.get_template('module')
+template_case = env.get_template('case')
+template_caseinput = env.get_template('caseinput')
+template_caseinput_mealy = env.get_template('caseinputmealy')
+template_fileinput = env.get_template('input_file')
+template_constraint = env.get_template('constraints')
 
-filename = args.file
-with open(filename) as fl:
-    fls = fl.read()
-fls = fls + "\n"  # Adding a newline to prevent parsing error
-tree = parser.parse(fls)
+defination_dict = {"LED0":"U16","LED1":"E19","LED2":"U19","LED3":"V19","LED4":"W18","LED5":"U15","LED6":"U14","LED7":"V14","LED8":"V13","LED9":"V3","LED10":"W3","LED11":"U3","LED12":"P3","LED13":"N3","LED14":"P1","LED15":"L1","MIDDLE_BUTTON":"U18","DOWN_BUTTON":"U17","LEFT_BUTTON":"W19","RIGHT_BUTTON":"T17","UP_BUTTON":"T18","SWITCH0":"V17","SWITCH1":"V16","SWITCH2":"W16","SWITCH3":"W17","SWITCH4":"W15","SWITCH5":"V15","SWITCH6":"W14","SWITCH7":"W13","SWITCH8":"V2","SWITCH9":"T3","SWITCH10":"T2","SWITCH11":"R3","SWITCH12":"W2","SWITCH13":"U1","SWITCH14":"T1","SWITCH15":"R2"}
 
 
 class FSMTransfomer(Transformer):
@@ -122,31 +128,15 @@ class FSMTransfomer(Transformer):
         return [str(match[0]), str(match[1]), int(match[2]), int(match[3])]
 
     def sigdesc(self, matches):
-        return str(matches[0]),str(matches[1])
-# print(tree)
-res = FSMTransfomer().transform(tree)
-print(res)
-
+        dct = {}
+        for match in matches:
+            dct[match[0]] = match[1]
+        return 'Constraints', dct
+    def sig(self, match):
+        return [str(match[0]), str(match[1])]
 
 def getifthere(dct, property, default=None):
     return dct[property] if property in dct else default
-
-
-def binsizer(n):
-    return len(bin(n)[2:])
-
-
-env = Environment(loader=FileSystemLoader('./jtemplates/', followlinks=True))
-template_always = env.get_template('always')
-template_module = env.get_template('module')
-template_case = env.get_template('case')
-template_caseinput = env.get_template('caseinput')
-template_caseinput_mealy = env.get_template('caseinputmealy')
-
-
-def file_dump(flname, content):
-    with open(flname, 'w') as fl:
-        fl.write(content)
 
 
 def binarytoGray(binary):
@@ -156,10 +146,17 @@ def binarytoGray(binary):
         gray += str(int(binary[i - 1]) ^ int(binary[i]))
     return gray
 
+def formtarget(s):
+    if ("[" in s):
+        print(1)
+        return "{" + s + "}"
+    else:
+        print(2)
+        return s
 
 def encode(encodi, state_num, nstates):
     encodi = encodi.lower()
-    sbi = bin(nstates-1)[2:]
+    sbi = bin(nstates - 1)[2:]
     bi = bin(state_num)[2:]
     if encodi == 'binary':
         return str(len(sbi)) + "'b" + '0' * (len(sbi) - len(bi)) + bi
@@ -178,6 +175,19 @@ def encode(encodi, state_num, nstates):
         return str(nstates) + "'b" + ois
     else:
         return
+
+
+def binsizer(n):
+    return len(bin(n)[2:])
+
+
+def file_dump(flname, content):
+    with open(flname, 'w') as fl:
+        fl.write(content)
+
+
+def index(request):
+    return render(request, 'template_gui/gui.html', {})
 
 
 def makeMoore(modname, inp_size, state_output, states, transition_matrix, start, enc):
@@ -301,24 +311,167 @@ def makeMealy(modname, inp_size, states, transition_matrix, start, enc):
     file_dump(modname + '.v', module)
 
 
-def makeFSM(**params):
-    modname = getifthere(params, 'Name', 'FSMmodule')
-    # print(modname)
-    typ = getifthere(params, 'Type', 'MOORE')
-    enc = getifthere(params, 'Encoding', 'BINARY')
-    if typ == "MOORE":
-        inp_size = getifthere(params, 'Isize', 8)
-        state_output = params['States']
-        states = [i for i in state_output.keys()]
-        transition_matrix = params['Transition']
-        start = getifthere(params, 'Start', states[0])
+def makeFSM_gui(params):
+    modname = params['modname']
+    typ = params['type']
+    enc = params['enc']
+    inp_size = params['inp_size']
+    state_output = params['States']
+    states = [i for i in state_output]
+    transition_matrix = params['Transition']
+    start = params['start_state']
+    if typ == "Moore":
         makeMoore(modname, inp_size, state_output, states, transition_matrix, start, enc)
     else:
-        inp_size = getifthere(params, 'Isize', 8)
-        transition_matrix = params['Transition']
-        states = params['States']
-        start = getifthere(params, 'Start', list(transition_matrix.keys())[0])
         makeMealy(modname, inp_size, states, transition_matrix, start, enc)
 
 
-makeFSM(**res)
+def makeFSM_file(**params):
+	# print(params)
+	modname = getifthere(params, 'Name', 'FSMmodule')
+	typ = getifthere(params, 'Type', 'MOORE')
+	enc = getifthere(params, 'Encoding', 'BINARY')
+	constraint = getifthere(params, 'Constraints')
+	print(constraint)
+	if typ == "MOORE":
+		inp_size = getifthere(params, 'Isize', 8)
+		state_output = params['States']
+		states = [i for i in state_output.keys()]
+		transition_matrix = params['Transition']
+		start = getifthere(params, 'Start', states[0])
+		makeMoore(modname, inp_size, state_output, states, transition_matrix, start, enc)
+	else:
+		inp_size = getifthere(params, 'Isize', 8)
+		transition_matrix = params['Transition']
+		states = params['States']
+		start = getifthere(params, 'Start', list(transition_matrix.keys())[0])
+		makeMealy(modname, inp_size, states, transition_matrix, start, enc)
+	if constraint:
+		make_constraints(constraint)
+
+def make_constraints(res):
+    s = ""
+    s += r"""set_property CLOCK_DEDICATED_ROUTE FALSE [get_nets clk_IBUF]
+"""
+    for i in res:
+       s = s + template_constraint.render(target = defination_dict[res[i]],signame = formtarget(i))
+    s+= r"""
+set_property BITSTREAM.GENERAL.COMPRESS TRUE [current_design]
+set_property BITSTREAM.CONFIG.CONFIGRATE 33 [current_design]
+set_property CONFIG_MODE SPIx4 [current_design]
+    """ 
+    print(s)
+    file_dump('constraints.xdc',s)
+
+@csrf_exempt
+def file_upload(request):
+    myfile = request.FILES['file']
+    # print(myfile, type(myfile))
+    fs = FileSystemStorage()
+    filename = fs.save(myfile.name, myfile)
+    uploaded_file_url = fs.url(filename)
+    # print(uploaded_file_url)
+    with open(uploaded_file_url[1:]) as fl:
+        fls = fl.read()
+    fls = fls + "\n"  # Adding a newline to prevent parsing error
+    tree = parser.parse(fls)
+    res = FSMTransfomer().transform(tree)
+    print(res)
+    makeFSM_file(**res)
+    return redirect(request.META['HTTP_REFERER'])
+
+
+@csrf_exempt
+def submit(request):
+    type = request.POST.get('type')
+    if (type == 'Moore'):
+        name = request.POST.get('name')
+        if name == '':
+            name = 'FSMmodule'
+        input_size = request.POST.get('input_size')
+        if input_size == '':
+            input_size = 8
+        else:
+            input_size = int(input_size)
+        encoding = request.POST.get('encoding')
+        i = 0
+        states = {}
+        while True:
+            s = 'state_name' + str(i)
+            so = 'state_output' + str(i)
+            state_name = request.POST.get(s)
+            state_output = request.POST.get(so)
+            if state_name == None or state_output == None:
+                break
+            states[state_name] = int(state_output)
+            i += 1
+        start = request.POST.get('start')
+        if start == '':
+            start = list(states.keys())[0]
+        transition = {}
+        i = 0
+        while True:
+            s = 'state' + str(i)
+            ns = 'next_state' + str(i)
+            inp = 'input' + str(i)
+            state = request.POST.get(s)
+            next_state = request.POST.get(ns)
+            inputi = request.POST.get(inp)
+            if state == None or next_state == None or inputi == None:
+                break
+            if state not in transition:
+                transition[state] = {}
+            transition[state][inputi] = next_state
+            i += 1
+    else:
+        name = request.POST.get('mname')
+        if name == '':
+            name = 'FSMmodule'
+        input_size = request.POST.get('minput_size')
+        if input_size == '':
+            input_size = 8
+        else:
+            input_size = int(input_size)
+        encoding = request.POST.get('mencoding')
+        i = 0
+        states = []
+        while True:
+            s = 'mstate_name' + str(i)
+            state_name = request.POST.get(s)
+            if state_name == None:
+                break
+            states.append(state_name)
+            i += 1
+        start = request.POST.get('mstart')
+        if start == '':
+            start = states[0]
+        transition = {}
+        i = 0
+        while True:
+            s = 'mstate' + str(i)
+            ns = 'mnext_state' + str(i)
+            inp = 'minput' + str(i)
+            out = 'moutput' + str(i)
+            state = request.POST.get(s)
+            next_state = request.POST.get(ns)
+            inputi = request.POST.get(inp)
+            output = request.POST.get(out)
+            if state == None or next_state == None or inputi == None or output == None:
+                break
+            if state not in transition:
+                transition[state] = {}
+            transition[state][inputi] = [next_state, int(output)]
+            i += 1
+    params = {'type': type, 'modname': name,
+              'inp_size': input_size, 'enc': encoding,
+              'States': states, 'Transition': transition,
+              'start_state': start,
+              }
+    print(params)
+    myfi = template_fileinput.render(type=type, name=name, input_size=input_size, encoding=encoding, states=states,
+                                     transitions=transition)
+    fil = open('media/' + name + '.txt', 'w')
+    fil.write(myfi)
+    fil.close()
+    makeFSM_gui(params)
+    return redirect(request.META['HTTP_REFERER'])
