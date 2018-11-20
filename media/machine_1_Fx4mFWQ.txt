@@ -1,0 +1,23 @@
+MACHINE_TYPE: MOORE
+
+INPUT_SIZE: 1
+Encoding: Binary
+
+STATE_DESC:
+STATE_0 gives 0
+STATE_1 gives 0
+STATE_2 gives 1
+
+TRANSITION:
+STATE_0 to STATE_1 on 1
+STATE_0 to STATE_0 on 0
+STATE_1 to STATE_0 on 0
+STATE_1 to STATE_2 on 1
+STATE_2 to STATE_2 on 1
+STATE_2 to STATE_0 on 0
+
+Constraints:
+connect clk with MIDDLE_BUTTON
+connect O with LED0
+connect reset with RIGHT_BUTTON
+connect w with SWITCH0

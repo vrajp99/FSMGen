@@ -3,30 +3,32 @@ function func(str) {
         var w = document.getElementById('state_container');
         var val = (parseInt(w.lastElementChild.getAttribute('name')) + 1).toString();
         var a = document.createElement("div");
+        a.classList.add("form-inline", "mb-3");
         a.setAttribute('name', val);
         a.setAttribute('id', "moore_" + val);
-        var p = document.createElement("p");
         var state_name = document.createElement("input");
         state_name.type = "text";
         state_name.placeholder = "State Name";
         state_name.name = "state_name" + val;
-        p.appendChild(state_name);
+        state_name.classList.add("form-control");
+        a.appendChild(state_name);
         var sp = document.createElement("span");
         sp.innerText = " gives ";
-        p.appendChild(sp);
+        sp.classList.add("ml-2", "mr-2");
+        a.appendChild(sp);
         var state_out = document.createElement("input");
         state_out.type = "text";
         state_out.placeholder = "State Output";
         state_out.name = "state_output" + val;
-        p.appendChild(state_out);
+        state_out.classList.add("form-control");
+        a.appendChild(state_out);
         var cancel = document.createElement("button");
         cancel.type = "button";
-        cancel.innerText = "cancel";
-        cancel.setAttribute('name',"cancel" + val);
-        cancel.setAttribute("onclick","cancel('" + cancel.name + "')");
-        cancel.setAttribute("class","btn btn-default");
-        p.appendChild(cancel);
-        a.appendChild(p);
+        cancel.innerText = "Delete";
+        cancel.setAttribute('name', "cancel" + val);
+        cancel.setAttribute("onclick", "cancel('" + cancel.name + "')");
+        cancel.classList.add("btn", "btn-danger", "form-control", "ml-2" );
+        a.appendChild(cancel);
         w.appendChild(a);
     }
     else {
@@ -34,21 +36,21 @@ function func(str) {
         var val = (parseInt(w.lastElementChild.getAttribute('name')) + 1).toString();
         var a = document.createElement("div");
         a.setAttribute('name', val);
+        a.classList.add("form-inline", "mb-3");
         a.setAttribute('id', "mealy_" + val);
-        var p = document.createElement("p");
         var state_name = document.createElement("input");
         state_name.type = "text";
         state_name.placeholder = "State Name";
         state_name.name = "mstate_name" + val;
-        p.appendChild(state_name);
+        state_name.classList.add("form-control");
+        a.appendChild(state_name);
         var cancel = document.createElement("button");
         cancel.type = "button";
-        cancel.innerText = "cancel";
-        cancel.setAttribute('name',"mcancel" + val);
-        cancel.setAttribute("onclick","cancel('" + cancel.name + "')");
-        cancel.setAttribute("class","btn btn-default");
-        p.appendChild(cancel);
-        a.appendChild(p);
+        cancel.innerText = "Delete";
+        cancel.setAttribute('name', "mcancel" + val);
+        cancel.setAttribute("onclick", "cancel('" + cancel.name + "')");
+        cancel.classList.add("btn", "btn-danger", "form-control", "ml-2" );
+        a.appendChild(cancel);
         w.appendChild(a);
     }
 }
@@ -60,36 +62,40 @@ function funci(str) {
         var a = document.createElement("div");
         a.setAttribute('name', val);
         a.setAttribute('id', "tmoore_" + val);
-        var p = document.createElement("p");
+        a.classList.add("mb-2");
         var state = document.createElement("input");
         state.type = "text";
         state.placeholder = "State Name";
         state.name = "state" + val;
-        p.appendChild(state);
+        state.classList.add("form-control");
+        a.appendChild(state);
         var sp = document.createElement("span");
         sp.innerText = " to ";
-        p.appendChild(sp);
+        sp.classList.add("ml-2", "mr-2");
+        a.appendChild(sp);
         var next_state = document.createElement("input");
         next_state.type = "text";
         next_state.placeholder = "Next State";
         next_state.name = "next_state" + val;
-        p.appendChild(next_state);
+        next_state.classList.add("form-control");
+        a.appendChild(next_state);
         var spa = document.createElement("span");
         spa.innerText = " on ";
-        p.appendChild(spa);
+        spa.classList.add("ml-2", "mr-2");
+        a.appendChild(spa);
         var input = document.createElement("input");
         input.type = "text";
         input.placeholder = "Input Value";
         input.name = "input" + val;
-        p.appendChild(input);
+        input.classList.add("form-control");
+        a.appendChild(input);
         var cancel = document.createElement("button");
         cancel.type = "button";
-        cancel.innerText = "cancel";
-        cancel.setAttribute('name',"tcancel" + val);
-        cancel.setAttribute("onclick","cancel('" + cancel.name + "')");
-        cancel.setAttribute("class","btn btn-default");
-        p.appendChild(cancel);
-        a.appendChild(p);
+        cancel.innerText = "Delete";
+        cancel.setAttribute('name', "tcancel" + val);
+        cancel.setAttribute("onclick", "cancel('" + cancel.name + "')");
+        cancel.classList.add("btn", "btn-danger", "form-control", "ml-2" );
+        a.appendChild(cancel);
         w.appendChild(a);
     }
     else {
@@ -98,44 +104,50 @@ function funci(str) {
         var a = document.createElement("div");
         a.setAttribute('name', val);
         a.setAttribute('id', "tmealy_" + val);
-        var p = document.createElement("p");
+        a.classList.add("mb-2");
         var state = document.createElement("input");
         state.type = "text";
         state.placeholder = "State Name";
         state.name = "mstate" + val;
-        p.appendChild(state);
+        state.classList.add("form-control");
+        a.appendChild(state);
         var sp = document.createElement("span");
         sp.innerText = " to ";
-        p.appendChild(sp);
+        sp.classList.add("ml-2", "mr-2");
+        a.appendChild(sp);
         var next_state = document.createElement("input");
         next_state.type = "text";
         next_state.placeholder = "Next State";
         next_state.name = "mnext_state" + val;
-        p.appendChild(next_state);
+        next_state.classList.add("form-control");
+        a.appendChild(next_state);
         var spa = document.createElement("span");
         spa.innerText = " on ";
-        p.appendChild(spa);
+        spa.classList.add("ml-2", "mr-2");
+        a.appendChild(spa);
         var input = document.createElement("input");
         input.type = "text";
         input.placeholder = "Input Value";
         input.name = "minput" + val;
-        p.appendChild(input);
-        sp = document.createElement("span");
-        sp.innerText = " gives ";
-        p.appendChild(sp);
+        input.classList.add("form-control");
+        a.appendChild(input);
+        var sp1 = document.createElement("span");
+        sp1.innerText = " gives ";
+        sp1.classList.add("ml-2", "mr-2");
+        a.appendChild(sp1);
         var output = document.createElement("input");
         output.type = "text";
         output.placeholder = "Input Value";
         output.name = "moutput" + val;
-        p.appendChild(output);
+        output.classList.add("form-control");
+        a.appendChild(output);
         var cancel = document.createElement("button");
         cancel.type = "button";
-        cancel.innerText = "cancel";
-        cancel.setAttribute('name',"tmcancel" + val);
-        cancel.setAttribute("onclick","cancel('" + cancel.name + "')");
-        cancel.setAttribute("class","btn btn-default");
-        p.appendChild(cancel);
-        a.appendChild(p);
+        cancel.innerText = "Delete";
+        cancel.setAttribute('name', "tmcancel" + val);
+        cancel.setAttribute("onclick", "cancel('" + cancel.name + "')");
+        cancel.classList.add("btn", "btn-danger", "form-control", "ml-2" );
+        a.appendChild(cancel);
         w.appendChild(a);
     }
 }
@@ -159,11 +171,11 @@ function select_type() {
 function cancel(argument) {
     var a = "";
     console.log(argument);
-    if ("cance" === argument.slice(0,5))
+    if ("cance" === argument.slice(0, 5))
         a = "moore_" + argument.charAt(6);
-    else if ("mcanc" === argument.slice(0,5))
+    else if ("mcanc" === argument.slice(0, 5))
         a = "mealy_" + argument.charAt(7);
-    else if ("tcanc" === argument.slice(0,5))
+    else if ("tcanc" === argument.slice(0, 5))
         a = "tmoore_" + argument.charAt(7);
     else
         a = "tmealy_" + argument.charAt(8);
@@ -175,13 +187,13 @@ function cancel(argument) {
 
 function add_constraints() {
     var doc = document.getElementById("constraints");
-    if (doc.style.display === "none"){
+    if (doc.style.display === "none") {
         doc.style.display = "block";
-        doc.getElementByTagName("button").innerText = "Remove Constraints" ;
+        doc.getElementByTagName("button").innerText = "Remove Constraints";
     }
-    else{
+    else {
         doc.style.display = "none";
-        doc.getElementByTagName("button").innerText = "Add Constraints" ;
+        doc.getElementByTagName("button").innerText = "Add Constraints";
     }
 
 }
