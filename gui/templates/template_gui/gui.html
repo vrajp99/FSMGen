@@ -4,126 +4,329 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+          integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
     <title>PyFSM</title>
     <link rel="stylesheet" href="{% static 'style.css' %}"/>
-    <script src="{% static 'scripti.js' %}" > </script>
+    <style>
+
+    </style>
 </head>
 <body>
-<h1 id="head">
-    <center>PyFSM</center>
-</h1>
-<form action="/gui/file_upload/" enctype="multipart/form-data" method="post">
-    <input type="file" name="file" /><br>
-    <button type="submit" class="btn btn-default">Submit</button>
-    <br><br>
-    OR<br><br>
-</form>
-<form action="/gui/submit/" method="post">
-    <div class="dropdown">
-        <label>Machine Type:</label>
-        <select class="styled-select.slate" id="select" name="type">
-            <option value="Moore" selected="selected">Moore Machine</option>
-            <option value="Mealy">Mealy Machine</option>
-        </select>
+<div class="container-fluid" style="padding-bottom: 3em">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <h1 id="head" class="text-center" style="padding-top: 1em;padding-bottom: 1em">
+                PyFSM
+            </h1>
+            <ul class="nav nav-pills nav-fill" role="tablist" style="margin-bottom: 3em">
+                <li class="nav-item" style="font-weight: 700; font-size: 1.125em;"><a id="ocl1"
+                                                                                      style="border: 1px solid black;border-radius: 0.25rem; border-top-right-radius: 0;border-bottom-right-radius: 0"
+                                                                                      class="nav-link active"
+                                                                                      data-toggle="pill" href="#oc1"
+                                                                                      role="tab" aria-controls="oc1"
+                                                                                      aria-selected="true">File Mode</a>
+                </li>
+                <li class="nav-item" style="font-weight: 700; font-size: 1.125em; "><a id="ocl2"
+                                                                                       style="border: 1px solid black;border-radius: 0.25rem; border-top-left-radius: 0;border-bottom-left-radius: 0"
+                                                                                       class="nav-link"
+                                                                                       data-toggle="pill"
+                                                                                       href="#oc2" role="tab"
+                                                                                       aria-controls="oc2"
+                                                                                       aria-selected="false">GUI
+                    Mode</a></li>
+            </ul>
+            <div class="tab-content">
+                <div class="tab-pane active" id="oc1" role="tabpanel" aria-labelledby="ocl1">
+                    <div class="card">
+                        <!--<h5 class="card-header">File Upload</h5>-->
+                        <div class="card-body">
+                            <form action="/gui/file_upload/" enctype="multipart/form-data" method="post">
+                                <div class="input-group mb-3">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text" id="inputGroupFileAddon01">Upload</span>
+                                    </div>
+                                    <div class="custom-file">
+                                        <input type="file" class="custom-file-input" name="file" id="inputGroupFile01"
+                                               aria-describedby="inputGroupFileAddon01">
+                                        <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
+                                    </div>
+                                </div>
+                                <button type="submit" class="form-control btn btn-success">Submit</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane" id="oc2" role="tabpanel" aria-labelledby="ocl2">
+                    <div class="card">
+                        <!--<h5 class="card-header">FSM Generator</h5>-->
+                        <div class="card-body">
+                            <form action="/gui/submit/" method="post">
+                                <div class="dropdown form-inline mb-3">
+                                    <label>Machine Type:</label>
+                                    <select onclick="select_type()" class="form-control ml-2" id="select" name="type">
+                                        <option value="Moore" selected="selected">Moore Machine</option>
+                                        10
+                                        <option value="Mealy">Mealy Machine</option>
+                                    </select>
+                                </div>
+                                <div id="moore" style="display: none;">
+                                    <div class="form-inline mb-3">
+                                        <label>Name of the module:</label>
+                                        <input class="form-control ml-2" type="text" id="name" name="name" placeholder="Module Name">
+                                    </div>
+                                    <div class="dropdown form-inline mb-3">
+                                        <label>Encoding:</label>
+                                        <select class="form-control ml-2" name="encoding">
+                                            <option value="binary" selected="selected">Binary Encoding</option>
+                                            <option value="gray">Gray Encoding</option>
+                                            <option value="onehot">One Hot Encoding</option>
+                                            <option value="onecold">One Cold Encoding</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-inline mb-3">
+                                        <label class="control-label">Input Size:</label>
+                                        <input class="form-control ml-2" type="text" id="input_size" name="input_size">
+                                    </div>
+                                    <hr>
+                                    <div class="form-group" id="state_container">
+                                        <h3>State Description</h3>
+                                        <div class="form-inline mb-3">
+                                            <label>Start State:</label>
+                                            <input type="text" id="start" name="start" class="form-control ml-2" placeholder="Start State">
+                                        </div>
+                                        <div id="moore_0" class="form-inline mb-3">
+                                            <input class="form-control" type="text" name="state_name0" placeholder="State Name"> <span class="ml-2 mr-2">gives</span>
+                                                <input class="form-control" type="text"
+                                                       name="state_output0"
+                                                       placeholder="State Output">
+                                        </div>
+                                    </div>
+                                    <button type="button" class="btn btn-primary" onclick="func('moore')">Add State
+                                    </button>
+                                    <hr>
+                                    <div class="form-inline mb-3" id="transition_container">
+                                        <div id="tmoore_0">
+                                            <h3>Transition Description</h3>
+                                            <input class="form-control" type="text" name="state0" placeholder="Present State"> <span class="ml-2 mr-2">to</span> <input
+                                                    class="form-control" type="text"
+                                                    name="next_state0"
+                                                    placeholder="Next State"> <span class="ml-2 mr-2">on</span>
+                                                <input class="form-control" type="text" name="input0" placeholder="Input">
+                                        </div>
+                                    </div>
+                                    <button type="button" class="btn btn-primary" onclick="funci('moore')">Add
+                                        Transition
+                                    </button>
+                                    <hr>
+                                    <br>
+                                    <button type="submit" class="btn btn-success form-control">Submit</button>
+                                </div>
+                                <div id="mealy" style="display: none;">
+                                        <div class="form-inline mb-3">
+                                            <label>Name of the module:</label>
+                                            <input class="form-control ml-2" type="text" id="mname" name="mname" placeholder="Module Name">
+                                        </div>
+                                        <div class="dropdown form-inline mb-3">
+                                            <label>Encoding:</label>
+                                            <select class="form-control ml-2" name="mencoding">
+                                                <option value="binary" selected="selected">Binary Encoding</option>
+                                                <option value="gray">Gray Encoding</option>
+                                                <option value="onehot">One Hot Encoding</option>
+                                                <option value="onecold">One Cold Encoding</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-inline mb-3">
+                                            <label class="control-label">Input Size:</label>
+                                            <input class="form-control ml-2" type="text" id="minput_size" name="minput_size">
+                                        </div>
+                                        <hr>
+                                        <div class="form-group" id="mstate_container">
+                                            <h3>State Description</h3>
+                                            <div class="form-inline mb-3">
+                                                <label>Start State:</label>
+                                                <input type="text" id="mstart" name="mstart" class="form-control ml-2" placeholder="Start State">
+                                            </div>
+                                            <div id="mealy_0" class="form-inline mb-3">
+                                                <input class="form-control" type="text" name="mstate_name0" placeholder="State Name">
+                                            </div>
+                                        </div>
+                                        <button type="button" class="btn btn-primary" onclick="func('mealy')">Add State
+                                        </button>
+                                        <hr>
+                                        <div class="form-inline mb-3" id="mtransition_container">
+                                            <div id="tmealy_0">
+                                                <h3>Transition Description</h3>
+                                                <input class="form-control" type="text" name="mstate0" placeholder="Present State"> <span class="ml-2 mr-2">to</span> <input
+                                                    class="form-control" type="text"
+                                                    name="mnext_state0"
+                                                    placeholder="Next State"> <span class="ml-2 mr-2">on</span>
+                                                <input class="form-control" type="text" name="minput0" placeholder="Input"> <span class="ml-2 mr-2">gives</span>
+                                                <input class="form-control" type="text" name="moutput0" placeholder="Output">
+                                            </div>
+                                        </div>
+                                        <button type="button" class="btn btn-primary" onclick="funci('mealy')">Add
+                                            Transition
+                                        </button>
+                                        <hr>
+                                        <br>
+                                        <button type="submit" class="btn btn-success form-control">Submit</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--<div id="cind" class="carousel slide">
+                <ol class="carousel-indicators">
+                    <li data-target="#cind" data-slide-to="0" class="active"></li>
+                    <li data-target="#cind" data-slide-to="1"></li>
+                </ol>
+                <div class="carousel-inner">
+                    <div class="carousel-item active">
+                        <div class="card">
+                            <h5 class="card-header">File Upload</h5>
+                            <div class="card-body">
+                                <form action="/gui/file_upload/" enctype="multipart/form-data" method="post">
+                                    <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text" id="inputGroupFileAddon01">Upload</span>
+                                        </div>
+                                        <div class="custom-file">
+                                            <input type="file" class="custom-file-input" name="file" id="inputGroupFile01" aria-describedby="inputGroupFileAddon01">
+                                            <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
+                                        </div>
+                                    </div>
+                                    <button type="submit" class="form-control btn btn-primary">Submit</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <div class="card">
+                            <h5 class="card-header">FSM Generator</h5>
+                            <div class="card-body">
+                                <form action="/gui/submit/" method="post">
+                                    <div class="dropdown">
+                                        <label>Machine Type:</label>
+                                        <select class="styled-select.slate" id="select" name="type">
+                                            <option value="Moore" selected="selected">Moore Machine</option>10
+                                            <option value="Mealy">Mealy Machine</option>
+                                        </select>
+                                    </div>
+                                    <button type="button" class="btn btn-primary" onclick="select_type()">Select</button>
+                                    <div id="moore" style="display: none;">
+                                        <div class="form-group">
+                                            <label class="control-label">Name of the module:</label> <input type="text" id="name" name="name"
+                                                                                                            placeholder="Module Name">
+                                        </div>
+                                        <div class="dropdown">
+                                            <label>Encoding:</label>
+                                            <select class="styled-select.slate" name="encoding">
+                                                <option value="binary" selected="selected">Binary Encoding</option>
+                                                <option value="gray">Gray Encoding</option>
+                                                <option value="onehot">One Hot Encoding</option>
+                                                <option value="onecold">One Cold Encoding</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label">Input Size:</label> <input type="text" id="input_size" name="input_size">
+                                        </div>
+                                        <div id="state_container">
+                                            <h3>State Description</h3>
+                                            <div id = "moore_0">
+                                                <p><input type="text" name="state_name0" placeholder="State Name"> gives <input type="text"
+                                                                                                                                name="state_output0"
+                                                                                                                                placeholder="State Output">
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <button type="button"  class="btn btn-primary" onclick="func('moore')">Add State
+                                        </button>
+                                        <div id="transition_container">
+                                            <h3>Transition Description</h3>
+                                            <div id = "tmoore_0">
+                                                <p><input type="text" name="state0" placeholder="Present State"> to <input type="text"
+                                                                                                                           name="next_state0"
+                                                                                                                           placeholder="Next State"> on
+                                                    <input type="text" name="input0" placeholder="Input"></p>
+                                            </div>
+                                        </div>
+                                        <button type="button"  class="btn btn-primary" onclick="funci('moore')">Add
+                                            Transition
+                                        </button>
+                                        <br><br>
+                                        <div class="form-group">
+                                            <label class="control-label">Start/Reset State:</label> <input type="text" id="start" name="start">
+                                        </div>
+                                        <br>
+                                        <button type="submit" class="btn btn-primary">Submit</button>
+                                    </div>
+                                    <div id="mealy" style="display: none;">
+                                        <div class="form-group">
+                                            <label class="control-label">Name of the module:</label> <input type="text" id="mname" name="mname"
+                                                                                                            placeholder="Module Name">
+                                        </div>
+                                        <div class="dropdown">
+                                            <label>Encoding:</label>
+                                            <select class="styled-select.slate" name="mencoding">
+                                                <option value="binary" selected="selected">Binary Encoding</option>
+                                                <option value="gray">Gray Encoding</option>
+                                                <option value="onehot">One Hot Encoding</option>
+                                                <option value="onecold">One Cold Encoding</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label">Input Size:</label> <input type="text" id="minput_size" name="minput_size">
+                                        </div>
+                                        <div id="mstate_container">
+                                            <h3>State Description</h3>
+                                            <div id = "mealy_0">
+                                                <p><input type="text" name="mstate_name0" placeholder="State Name"></p>
+                                            </div>
+                                        </div>
+                                        <button type="button"  class="btn btn-primary" onclick="func('mealy')">Add State
+                                        </button>
+                                        <div id="mtransition_container">
+                                            <h3>Transition Description</h3>
+                                            <div id = "tmealy_0">
+                                                <p><input type="text" name="mstate0" placeholder="Present State"> to <input type="text"
+                                                                                                                            name="mnext_state0"
+                                                                                                                            placeholder="Next State"> on
+                                                    <input type="text" name="minput0" placeholder="Input"> gives <input type="text" name="moutput0"
+                                                                                                                        placeholder="Output"></p>
+                                            </div>
+                                        </div>
+                                        <button type="button"  class="btn btn-primary" onclick="funci('mealy')">Add
+                                            Transition
+                                        </button>
+                                        <br><br>
+                                        <div class="form-group">
+                                            <label class="control-label">Start/Reset State:</label> <input type="text" id="mstart" name="mstart">
+                                        </div>
+                                        &lt;!&ndash; <button type="button" id="constraints_button"  class="btn btn-primary" onclick="add_constraints()">Add Constraints</button> &ndash;&gt;
+
+                                        <br>
+                                        <button type="submit" class="btn btn-primary">Submit</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>-->
+        </div>
     </div>
-    <button type="button" class="btn btn-default" onclick="select_type()">Select</button>
-    <div id="moore" style="display: none;">
-        <div class="form-group">
-            <label class="control-label">Name of the module:</label> <input type="text" id="name" name="name"
-                                                                            placeholder="Module Name">
-        </div>
-        <div class="dropdown">
-            <label>Encoding:</label>
-            <select class="styled-select.slate" name="encoding">
-                <option value="binary" selected="selected">Binary Encoding</option>
-                <option value="gray">Gray Encoding</option>
-                <option value="onehot">One Hot Encoding</option>
-                <option value="onecold">One Cold Encoding</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label class="control-label">Input Size:</label> <input type="text" id="input_size" name="input_size">
-        </div>
-        <div id="state_container">
-            <h3>State Description</h3>
-            <div name="0" id = "moore_0">
-                <p><input type="text" name="state_name0" placeholder="State Name"> gives <input type="text"
-                                                                                                name="state_output0"
-                                                                                                placeholder="State Output">
-                </p>
-            </div>
-        </div>
-        <button type="button" style="width: 10%" class="btn btn-default" onclick="func('moore')">Add State
-        </button>
-        <div id="transition_container">
-            <h3>Transition Description</h3>
-            <div name="0" id = "tmoore_0">
-                <p><input type="text" name="state0" placeholder="Present State"> to <input type="text"
-                                                                                           name="next_state0"
-                                                                                           placeholder="Next State"> on
-                    <input type="text" name="input0" placeholder="Input"></p>
-            </div>
-        </div>
-        <button type="button" style="width: 10%" class="btn btn-default" onclick="funci('moore')">Add
-            Transition
-        </button>
-        <br><br>
-        <div class="form-group">
-            <label class="control-label">Start/Reset State:</label> <input type="text" id="start" name="start">
-        </div>
-        <br>
-        <button type="submit" class="btn btn-default">Submit</button>
-    </div>
-    <div id="mealy" style="display: none;">
-        <div class="form-group">
-            <label class="control-label">Name of the module:</label> <input type="text" id="mname" name="mname"
-                                                                            placeholder="Module Name">
-        </div>
-        <div class="dropdown">
-            <label>Encoding:</label>
-            <select class="styled-select.slate" name="mencoding">
-                <option value="binary" selected="selected">Binary Encoding</option>
-                <option value="gray">Gray Encoding</option>
-                <option value="onehot">One Hot Encoding</option>
-                <option value="onecold">One Cold Encoding</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label class="control-label">Input Size:</label> <input type="text" id="minput_size" name="minput_size">
-        </div>
-        <div id="mstate_container">
-            <h3>State Description</h3>
-            <div name="0" id = "mealy_0">
-                <p><input type="text" name="mstate_name0" placeholder="State Name"></p>
-            </div>
-        </div>
-        <button type="button" style="width: 10%" class="btn btn-default" onclick="func('mealy')">Add State
-        </button>
-        <div id="mtransition_container">
-            <h3>Transition Description</h3>
-            <div id = "tmealy_0" name="0">
-                <p><input type="text" name="mstate0" placeholder="Present State"> to <input type="text"
-                                                                                            name="mnext_state0"
-                                                                                            placeholder="Next State"> on
-                    <input type="text" name="minput0" placeholder="Input"> gives <input type="text" name="moutput0"
-                                                                                        placeholder="Output"></p>
-            </div>
-        </div>
-        <button type="button" style="width: 10%" class="btn btn-default" onclick="funci('mealy')">Add
-            Transition
-        </button>
-        <br><br>
-        <div class="form-group">
-            <label class="control-label">Start/Reset State:</label> <input type="text" id="mstart" name="mstart">
-        </div>
-        <!-- <button type="button" id="constraints_button" style="width: 10%" class="btn btn-default" onclick="add_constraints()">Add Constraints</button> -->
-        
-        <br>
-        <button type="submit" class="btn btn-default">Submit</button>
-    </div>
-</form>
+</div>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
+        integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
+        integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
+        crossorigin="anonymous"></script>
+<script src="{% static 'scripti.js' %}"></script>
 </body>
 </html>

@@ -49,7 +49,7 @@ parser = Lark('''
 	''')
 
 env = Environment(
-    loader=FileSystemLoader('C:/Users/Kishen/Desktop/digitalproject/digitalproject/gui/templates/jtemplates/',
+    loader=FileSystemLoader('./gui/templates/jtemplates/',
                             followlinks=True))
 template_always = env.get_template('always')
 template_module = env.get_template('module')

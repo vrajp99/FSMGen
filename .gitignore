@@ -1,3 +1,5 @@
 /examples/*.v
 **/.idea
 *.v
+/gui/__pycache__/*.pyc
+/gui/migrations/__pycache__/*.pyc
