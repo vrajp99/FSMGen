@@ -59,7 +59,14 @@ template_caseinput_mealy = env.get_template('caseinputmealy')
 template_fileinput = env.get_template('input_file')
 template_constraint = env.get_template('constraints')
 
-defination_dict = {"LED0":"U16","LED1":"E19","LED2":"U19","LED3":"V19","LED4":"W18","LED5":"U15","LED6":"U14","LED7":"V14","LED8":"V13","LED9":"V3","LED10":"W3","LED11":"U3","LED12":"P3","LED13":"N3","LED14":"P1","LED15":"L1","MIDDLE_BUTTON":"U18","DOWN_BUTTON":"U17","LEFT_BUTTON":"W19","RIGHT_BUTTON":"T17","UP_BUTTON":"T18","SWITCH0":"V17","SWITCH1":"V16","SWITCH2":"W16","SWITCH3":"W17","SWITCH4":"W15","SWITCH5":"V15","SWITCH6":"W14","SWITCH7":"W13","SWITCH8":"V2","SWITCH9":"T3","SWITCH10":"T2","SWITCH11":"R3","SWITCH12":"W2","SWITCH13":"U1","SWITCH14":"T1","SWITCH15":"R2"}
+defination_dict = {"LED0": "U16", "LED1": "E19", "LED2": "U19", "LED3": "V19", "LED4": "W18", "LED5": "U15",
+                   "LED6": "U14", "LED7": "V14", "LED8": "V13", "LED9": "V3", "LED10": "W3", "LED11": "U3",
+                   "LED12": "P3", "LED13": "N3", "LED14": "P1", "LED15": "L1", "MIDDLE_BUTTON": "U18",
+                   "DOWN_BUTTON": "U17", "LEFT_BUTTON": "W19", "RIGHT_BUTTON": "T17", "UP_BUTTON": "T18",
+                   "SWITCH0": "V17", "SWITCH1": "V16", "SWITCH2": "W16", "SWITCH3": "W17", "SWITCH4": "W15",
+                   "SWITCH5": "V15", "SWITCH6": "W14", "SWITCH7": "W13", "SWITCH8": "V2", "SWITCH9": "T3",
+                   "SWITCH10": "T2", "SWITCH11": "R3", "SWITCH12": "W2", "SWITCH13": "U1", "SWITCH14": "T1",
+                   "SWITCH15": "R2"}
 
 
 class FSMTransfomer(Transformer):
@@ -132,8 +139,10 @@ class FSMTransfomer(Transformer):
         for match in matches:
             dct[match[0]] = match[1]
         return 'Constraints', dct
+
     def sig(self, match):
         return [str(match[0]), str(match[1])]
+
 
 def getifthere(dct, property, default=None):
     return dct[property] if property in dct else default
@@ -146,6 +155,7 @@ def binarytoGray(binary):
         gray += str(int(binary[i - 1]) ^ int(binary[i]))
     return gray
 
+
 def formtarget(s):
     if ("[" in s):
         print(1)
@@ -153,6 +163,7 @@ def formtarget(s):
     else:
         print(2)
         return s
+
 
 def encode(encodi, state_num, nstates):
     encodi = encodi.lower()
@@ -327,41 +338,162 @@ def makeFSM_gui(params):
 
 
 def makeFSM_file(**params):
-	# print(params)
-	modname = getifthere(params, 'Name', 'FSMmodule')
-	typ = getifthere(params, 'Type', 'MOORE')
-	enc = getifthere(params, 'Encoding', 'BINARY')
-	constraint = getifthere(params, 'Constraints')
-	print(constraint)
-	if typ == "MOORE":
-		inp_size = getifthere(params, 'Isize', 8)
-		state_output = params['States']
-		states = [i for i in state_output.keys()]
-		transition_matrix = params['Transition']
-		start = getifthere(params, 'Start', states[0])
-		makeMoore(modname, inp_size, state_output, states, transition_matrix, start, enc)
-	else:
-		inp_size = getifthere(params, 'Isize', 8)
-		transition_matrix = params['Transition']
-		states = params['States']
-		start = getifthere(params, 'Start', list(transition_matrix.keys())[0])
-		makeMealy(modname, inp_size, states, transition_matrix, start, enc)
-	if constraint:
-		make_constraints(constraint)
+    # print(params)
+    modname = getifthere(params, 'Name', 'FSMmodule')
+    typ = getifthere(params, 'Type', 'MOORE')
+    enc = getifthere(params, 'Encoding', 'BINARY')
+    constraint = getifthere(params, 'Constraints')
+    print(constraint)
+    if typ == "MOORE":
+        inp_size = getifthere(params, 'Isize', 8)
+        state_output = params['States']
+        states = [i for i in state_output.keys()]
+        transition_matrix = params['Transition']
+        start = getifthere(params, 'Start', states[0])
+        makeMoore(modname, inp_size, state_output, states, transition_matrix, start, enc)
+    else:
+        inp_size = getifthere(params, 'Isize', 8)
+        transition_matrix = params['Transition']
+        states = params['States']
+        start = getifthere(params, 'Start', list(transition_matrix.keys())[0])
+        makeMealy(modname, inp_size, states, transition_matrix, start, enc)
+    if constraint:
+        make_constraints(constraint)
+
 
 def make_constraints(res):
     s = ""
     s += r"""set_property CLOCK_DEDICATED_ROUTE FALSE [get_nets clk_IBUF]
 """
     for i in res:
-       s = s + template_constraint.render(target = defination_dict[res[i]],signame = formtarget(i))
-    s+= r"""
+        s = s + template_constraint.render(target=defination_dict[res[i]], signame=formtarget(i))
+    s += r"""
 set_property BITSTREAM.GENERAL.COMPRESS TRUE [current_design]
 set_property BITSTREAM.CONFIG.CONFIGRATE 33 [current_design]
 set_property CONFIG_MODE SPIx4 [current_design]
-    """ 
+    """
     print(s)
-    file_dump('constraints.xdc',s)
+    file_dump('constraints.xdc', s)
+
+
+def testbench(modname, testin):
+    code = ''
+    code += "`timescale 1ns/1ps\n"
+    code += "module tb_" + str(modname) + "();\n"
+    code += "reg w,clk,reset;\n"
+    code += "wire O;\n"
+    code += modname + " m1(w,clk,reset,O);\n"
+    code += "initial\n"
+    code += "begin\n"
+    code += "reset=1;w=0;\n#1 clk=0;\n"
+    code += "#9 reset=0;\n"
+    code += '''$monitor($time, , ,"clk=%b",clk,,"O=%b",O,,"reset=%b",reset,,"w=%b",w);\n'''
+    for i in testin:
+        code += "#10 w=" + i + ";\n"
+    code += "end\n"
+    code += "always\n"
+    code += "#5 clk=~clk;\n"
+    code += "initial\n"
+    code += "#100 $finish ;\n"
+    code += "endmodule\n"
+    file_dump("tb_" + modname + '.v', code)
+
+
+@csrf_exempt
+def seq_det(request):
+    name = request.POST.get("name")
+    if name == '':
+        name = 'FSMmodule'
+    type = request.POST.get("type")
+    inp = request.POST.get("input")
+    seq_type = request.POST.get("seq_type")
+    enc = request.POST.get("enc")
+    tb = request.POST.get("tb")
+    inp_size = 1
+    if type == 'moore':
+        d = {}
+        le = len(inp)
+        for i in range(le + 1):
+            st = 's' + str(i)
+            d[st] = {}
+        for i in range(le):
+            st = 's' + str(i)
+            d[st][a[i]] = 's' + str(i + 1)
+            sn = inp[:i] + '0' if inp[i] == '1' else inp[:i] + '1'
+            for j in range(i + 1):
+                if inp[:i + 1 - j] == sn[j - i - 1:]:
+                    l = i + 1 - j
+                    break
+            else:
+                l = 0
+            d[st][sn[-1]] = 's' + str(l)
+        if seq_type == 'nonov':
+            d['s' + str(le)] = d['s0']
+        else:
+            for i in range(le):
+                stri0 = inp[i + 1:] + '0'
+                if stri0 == inp[:le - i]:
+                    d['s' + str(le)]['0'] = 's' + str(le - i)
+                    break
+            else:
+                d['s' + str(le)]['0'] = 's0'
+            for i in range(le):
+                stri1 = inp[i + 1:] + '1'
+                if stri1 == inp[:le - i]:
+                    d['s' + str(le)]['1'] = 's' + str(le - i)
+                    break
+            else:
+                d['s' + str(le)]['1'] = 's0'
+        sd = {}
+        for i in range(le):
+            sd['s' + str(i)] = 0
+        sd['s' + str(le)] = 1
+        state_output = sd
+        states = list(state_output.keys())
+        start = states[0]
+        transition_matrix = d
+        makeMoore(name, inp_size, state_output, states, transition_matrix, start, enc)
+    else:
+        le = len(inp)
+        d = {}
+        for i in range(le):
+            d['s' + str(i)] = {}
+        for i in range(le - 1):
+            d['s' + str(i)][inp[i]] = ['s' + str(i + 1), 0]
+        for i in range(le - 1):
+            sn = inp[:i] + '0' if inp[i] == '1' else inp[:i] + '1'
+            for j in range(i + 1):
+                if inp[:i + 1 - j] == sn[j - i - 1:]:
+                    l = i + 1 - j
+                    break
+            else:
+                l = 0
+            d['s' + str(i)][sn[-1]] = ['s' + str(l), 0]
+        st = inp[:-1] + str(0 if int(inp[-1]) else 1)
+        li = 0
+        for i in range(le):
+            if st[i:] == inp[:le - i]:
+                li = le - i
+                break
+        d['s' + str(le - 1)][st[-1]] = ['s' + str(li), 0]
+        if type == 'nonov':
+            d['s' + str(le - 1)][a[-1]] = ['s0', 1]
+        else:
+            lr = 0
+            for i in range(1, le):
+                if inp[i:] == inp[:le - i]:
+                    lr = le - i
+                    break
+            d['s' + str(le - 1)][inp[-1]] = ['s' + str(lr), 1]
+        states = list(d.keys())
+        transition_matrix = d
+        start = states[0]
+        # so this prints the state description
+        makeMealy(name, inp_size, states, transition_matrix, start, enc)
+    if tb!='':
+        testbench(name, tb)
+    return redirect(request.META['HTTP_REFERER'])
+
 
 @csrf_exempt
 def file_upload(request):

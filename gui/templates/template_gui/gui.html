@@ -28,11 +28,14 @@
                 </li>
                 <li class="nav-item" style="font-weight: 700; font-size: 1.125em; ">
                     <a id="ocl2" style="border: 1px solid black;border-radius: 0"
-                       class="nav-link" data-toggle="pill" href="#oc2" role="tab" aria-controls="oc2" aria-selected="false">GUI
-                    Mode</a></li>
+                       class="nav-link" data-toggle="pill" href="#oc2" role="tab" aria-controls="oc2"
+                       aria-selected="false">GUI
+                        Mode</a></li>
                 <li class="nav-item" style="font-weight: 700; font-size: 1.125em; ">
-                    <a id="ocl3" style="border: 1px solid black;border-radius: 0.25rem; border-top-left-radius: 0;border-bottom-left-radius: 0"
-                       class="nav-link" data-toggle="pill" href="#oc3" role="tab" aria-controls="oc3" aria-selected="false">Sequence Detection</a></li>
+                    <a id="ocl3"
+                       style="border: 1px solid black;border-radius: 0.25rem; border-top-left-radius: 0;border-bottom-left-radius: 0"
+                       class="nav-link" data-toggle="pill" href="#oc3" role="tab" aria-controls="oc3"
+                       aria-selected="false">Sequence Detection</a></li>
             </ul>
             <div class="tab-content">
                 <div class="tab-pane active" id="oc1" role="tabpanel" aria-labelledby="ocl1">
@@ -97,24 +100,24 @@
                                         </div>
                                         <div id="moore_0" class="form-inline mb-3" name="0">
                                             <input class="form-control" type="text" name="state_name0"
-                                                   placeholder="State Name"> <span class="ml-2 mr-2">gives</span>
+                                                   placeholder="State Name" required> <span class="ml-2 mr-2">gives</span>
                                             <input class="form-control" type="text"
                                                    name="state_output0"
-                                                   placeholder="State Output">
+                                                   placeholder="State Output" required>
                                         </div>
                                     </div>
                                     <button type="button" class="btn btn-primary" onclick="func('moore')">Add State
                                     </button>
                                     <hr>
-                                    <div class="form-inline mb-3" id="transition_container">
-                                        <div id="tmoore_0" name="0" class="mb-2">
-                                            <h3>Transition Description</h3>
+                                    <div class="form-group" id="transition_container">
+                                        <h3>Transition Description</h3>
+                                        <div id="tmoore_0" name="0" class="form-inline mb-3">
                                             <input class="form-control" type="text" name="state0"
-                                                   placeholder="Present State"> <span class="ml-2 mr-2">to</span> <input
+                                                   placeholder="Present State" required> <span class="ml-2 mr-2">to</span> <input
                                                 class="form-control" type="text"
                                                 name="next_state0"
-                                                placeholder="Next State"> <span class="ml-2 mr-2">on</span>
-                                            <input class="form-control" type="text" name="input0" placeholder="Input">
+                                                placeholder="Next State" required> <span class="ml-2 mr-2">on</span>
+                                            <input class="form-control" type="text" name="input0" placeholder="Input" required>
                                         </div>
                                     </div>
                                     <button type="button" class="btn btn-primary" onclick="funci('moore')">Add
@@ -154,24 +157,24 @@
                                         </div>
                                         <div id="mealy_0" class="form-inline mb-3" name="0">
                                             <input class="form-control" type="text" name="mstate_name0"
-                                                   placeholder="State Name">
+                                                   placeholder="State Name" required>
                                         </div>
                                     </div>
                                     <button type="button" class="btn btn-primary" onclick="func('mealy')">Add State
                                     </button>
                                     <hr>
-                                    <div class="form-inline mb-3" id="mtransition_container">
-                                        <div id="tmealy_0" name="0" class="mb-2">
-                                            <h3>Transition Description</h3>
+                                    <div class="form-group" id="mtransition_container">
+                                        <h3>Transition Description</h3>
+                                        <div id="tmealy_0" name="0" class="form-inline mb-3">
                                             <input class="form-control" type="text" name="mstate0"
-                                                   placeholder="Present State"> <span class="ml-2 mr-2">to</span> <input
+                                                   placeholder="Present State" required> <span class="ml-2 mr-2">to</span> <input
                                                 class="form-control" type="text"
                                                 name="mnext_state0"
-                                                placeholder="Next State"> <span class="ml-2 mr-2">on</span>
-                                            <input class="form-control" type="text" name="minput0" placeholder="Input">
+                                                placeholder="Next State" required> <span class="ml-2 mr-2">on</span>
+                                            <input class="form-control" type="text" name="minput0" placeholder="Input" required>
                                             <span class="ml-2 mr-2">gives</span>
                                             <input class="form-control" type="text" name="moutput0"
-                                                   placeholder="Output">
+                                                   placeholder="Output" required>
                                         </div>
                                     </div>
                                     <button type="button" class="btn btn-primary" onclick="funci('mealy')">Add
@@ -191,22 +194,41 @@
                             <form action="/gui/seq_det/" method="post">
                                 <div class="dropdown form-inline mb-3">
                                     <label>Machine Type:</label>
-                                    <select onclick="" class="form-control ml-2" id="select" name="type">
+                                    <select class="form-control ml-2" id="seqselect" name="type">
                                         <option value="Moore" selected="selected">Moore Machine</option>
                                         <option value="Mealy">Mealy Machine</option>
                                     </select>
                                 </div>
                                 <div class="form-inline mb-3">
-                                        <label>Name of the module:</label>
-                                        <input class="form-control ml-2" type="text" id="name" name="name"
-                                               placeholder="Module Name">
+                                    <label>Name of the module:</label>
+                                    <input class="form-control ml-2" type="text" id="seqname" name="name"
+                                           placeholder="Module Name">
+                                </div>
+                                <div class="dropdown form-inline mb-3">
+                                    <label>Encoding:</label>
+                                    <select class="form-control ml-2" name="enc">
+                                        <option value="binary" selected="selected">Binary Encoding</option>
+                                        <option value="gray">Gray Encoding</option>
+                                        <option value="onehot">One Hot Encoding</option>
+                                        <option value="onecold">One Cold Encoding</option>
+                                    </select>
+                                </div>
+                                <div class="form-inline mb-3">
+                                    <label>Sequence:</label>
+                                    <input class="form-control ml-2" type="text" id="inp" name="input"
+                                           placeholder="Sequence" required>
                                 </div>
                                 <div class="dropdown form-inline mb-3">
                                     <label>Sequence Type:</label>
-                                    <select onclick="" class="form-control ml-2" id="select" name="type">
-                                        <option value="Moore" selected="selected">Overlapping</option>
-                                        <option value="Mealy">Non-overlapping</option>
+                                    <select class="form-control ml-2" name="seq_type">
+                                        <option value="ov" selected="selected">Overlapping</option>
+                                        <option value="nonov">Non-overlapping</option>
                                     </select>
+                                </div>
+                                <div class="form-inline mb-3">
+                                    <label>Test Bench Sequence:</label>
+                                    <input class="form-control ml-2" type="text" id="TB" name="tb"
+                                           placeholder="Test Bench Sequence">
                                 </div>
                                 <button type="submit" class="form-control btn btn-success">Submit</button>
                             </form>

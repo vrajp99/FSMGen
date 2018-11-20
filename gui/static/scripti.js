@@ -11,6 +11,7 @@ function func(str) {
         state_name.placeholder = "State Name";
         state_name.name = "state_name" + val;
         state_name.classList.add("form-control");
+        state_name.required = true;
         a.appendChild(state_name);
         var sp = document.createElement("span");
         sp.innerText = " gives ";
@@ -20,6 +21,7 @@ function func(str) {
         state_out.type = "text";
         state_out.placeholder = "State Output";
         state_out.name = "state_output" + val;
+        state_out.required = true;
         state_out.classList.add("form-control");
         a.appendChild(state_out);
         var cancel = document.createElement("button");
@@ -43,6 +45,7 @@ function func(str) {
         state_name.placeholder = "State Name";
         state_name.name = "mstate_name" + val;
         state_name.classList.add("form-control");
+        state_name.required = true;
         a.appendChild(state_name);
         var cancel = document.createElement("button");
         cancel.type = "button";
@@ -62,11 +65,12 @@ function funci(str) {
         var a = document.createElement("div");
         a.setAttribute('name', val);
         a.setAttribute('id', "tmoore_" + val);
-        a.classList.add("mb-2");
+        a.classList.add("form-inline", "mb-3");
         var state = document.createElement("input");
         state.type = "text";
         state.placeholder = "State Name";
         state.name = "state" + val;
+        state.required = true;
         state.classList.add("form-control");
         a.appendChild(state);
         var sp = document.createElement("span");
@@ -78,6 +82,7 @@ function funci(str) {
         next_state.placeholder = "Next State";
         next_state.name = "next_state" + val;
         next_state.classList.add("form-control");
+        next_state.required = true;
         a.appendChild(next_state);
         var spa = document.createElement("span");
         spa.innerText = " on ";
@@ -87,6 +92,7 @@ function funci(str) {
         input.type = "text";
         input.placeholder = "Input Value";
         input.name = "input" + val;
+        input.required = true;
         input.classList.add("form-control");
         a.appendChild(input);
         var cancel = document.createElement("button");
@@ -104,11 +110,12 @@ function funci(str) {
         var a = document.createElement("div");
         a.setAttribute('name', val);
         a.setAttribute('id', "tmealy_" + val);
-        a.classList.add("mb-2");
+        a.classList.add("form-inline", "mb-3");
         var state = document.createElement("input");
         state.type = "text";
         state.placeholder = "State Name";
         state.name = "mstate" + val;
+        state.required = true;
         state.classList.add("form-control");
         a.appendChild(state);
         var sp = document.createElement("span");
@@ -119,6 +126,7 @@ function funci(str) {
         next_state.type = "text";
         next_state.placeholder = "Next State";
         next_state.name = "mnext_state" + val;
+        next_state.required = true;
         next_state.classList.add("form-control");
         a.appendChild(next_state);
         var spa = document.createElement("span");
@@ -129,6 +137,7 @@ function funci(str) {
         input.type = "text";
         input.placeholder = "Input Value";
         input.name = "minput" + val;
+        input.required = true;
         input.classList.add("form-control");
         a.appendChild(input);
         var sp1 = document.createElement("span");
@@ -137,6 +146,7 @@ function funci(str) {
         a.appendChild(sp1);
         var output = document.createElement("input");
         output.type = "text";
+        output.required = true;
         output.placeholder = "Input Value";
         output.name = "moutput" + val;
         output.classList.add("form-control");
