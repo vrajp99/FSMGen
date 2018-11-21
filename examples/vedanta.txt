@@ -1,0 +1,28 @@
+MACHINE_TYPE: MEALY
+name:vedanta
+INPUT_SIZE: 1
+Encoding: Gray
+
+STATE_DESC:
+a
+b
+c
+
+TRANSITION:
+a to a on 0 gives 0
+a to b on 1 gives 0
+b to c on 1 gives 1
+b to a on 0 gives 0
+c to a on 0 gives 0
+c to c on 1 gives 1
+
+
+
+Testbench:
+0 1 0 1 0 1 1 1 0 1 0 1 
+
+Constraints:
+connect clk with BUTTON_M
+connect O with LED0
+connect reset with BUTTON_R
+connect w with SWITCH0

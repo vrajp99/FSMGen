@@ -4,10 +4,10 @@
   <TR ALIGN='CENTER' BGCOLOR='#A7BFDE'><TD COLSPAN='4'><B>software_version_and_target_device</B></TD></TR>
 <TR ALIGN='LEFT'>  <TD BGCOLOR='#DBE5F1'><B>beta</B></TD><TD>FALSE</TD>
   <TD BGCOLOR='#DBE5F1'><B>build_version</B></TD><TD>2258646</TD>
-</TR><TR ALIGN='LEFT'>  <TD BGCOLOR='#DBE5F1'><B>date_generated</B></TD><TD>Wed Nov 21 14:52:49 2018</TD>
+</TR><TR ALIGN='LEFT'>  <TD BGCOLOR='#DBE5F1'><B>date_generated</B></TD><TD>Wed Nov 21 17:20:57 2018</TD>
   <TD BGCOLOR='#DBE5F1'><B>os_platform</B></TD><TD>WIN64</TD>
 </TR><TR ALIGN='LEFT'>  <TD BGCOLOR='#DBE5F1'><B>product_version</B></TD><TD>Vivado v2018.2 (64-bit)</TD>
-  <TD BGCOLOR='#DBE5F1'><B>project_id</B></TD><TD>45fe25dd4d3a416facfbc84858190004</TD>
+  <TD BGCOLOR='#DBE5F1'><B>project_id</B></TD><TD>fa13ace9b4f24d8883f0b036534e3c35</TD>
 </TR><TR ALIGN='LEFT'>  <TD BGCOLOR='#DBE5F1'><B>project_iteration</B></TD><TD>1</TD>
   <TD BGCOLOR='#DBE5F1'><B>random_id</B></TD><TD>0fa23824-7c37-4e33-993b-574d6226f3e5</TD>
 </TR><TR ALIGN='LEFT'>  <TD BGCOLOR='#DBE5F1'><B>registration_id</B></TD><TD>201446719_1777515336_0_220</TD>
@@ -67,26 +67,22 @@
    <TABLE BORDER='1' CELLSPACING='0' WIDTH='100%'>
     <TR ALIGN='CENTER' BGCOLOR='#DBE5F1'><TD COLSPAN='4'><B>post_unisim_transformation</B></TD></TR>
 <TR ALIGN='LEFT'>    <TD>bufg=1</TD>
-    <TD>fdce=2</TD>
-    <TD>gnd=1</TD>
+    <TD>fdce=3</TD>
     <TD>ibuf=3</TD>
-</TR><TR ALIGN='LEFT'>    <TD>ldce=1</TD>
-    <TD>lut2=2</TD>
     <TD>lut3=2</TD>
-    <TD>obuf=1</TD>
-</TR><TR ALIGN='LEFT'>    <TD>vcc=1</TD>
+</TR><TR ALIGN='LEFT'>    <TD>obuf=1</TD>
+    <TD>vcc=1</TD>
 </TR>   </TABLE>
    </TD></TR>
    <TR><TD>
    <TABLE BORDER='1' CELLSPACING='0' WIDTH='100%'>
     <TR ALIGN='CENTER' BGCOLOR='#DBE5F1'><TD COLSPAN='4'><B>pre_unisim_transformation</B></TD></TR>
 <TR ALIGN='LEFT'>    <TD>bufg=1</TD>
-    <TD>fdce=2</TD>
+    <TD>fdce=3</TD>
     <TD>ibuf=3</TD>
-    <TD>ld=1</TD>
-</TR><TR ALIGN='LEFT'>    <TD>lut2=2</TD>
     <TD>lut3=2</TD>
-    <TD>obuf=1</TD>
+</TR><TR ALIGN='LEFT'>    <TD>obuf=1</TD>
+    <TD>vcc=1</TD>
 </TR>   </TABLE>
    </TD></TR>
   </TABLE><BR>
@@ -138,7 +134,7 @@
     <TD>flow_state=post_synth</TD>
 </TR><TR ALIGN='LEFT'>    <TD>slice_registers_augmented=0</TD>
     <TD>slice_registers_newly_gated=0</TD>
-    <TD>slice_registers_total=2</TD>
+    <TD>slice_registers_total=3</TD>
     <TD>srls_augmented=0</TD>
 </TR><TR ALIGN='LEFT'>    <TD>srls_newly_gated=0</TD>
     <TD>srls_total=0</TD>
@@ -150,24 +146,24 @@
    <TR><TD>
    <TABLE BORDER='1' CELLSPACING='0' WIDTH='100%'>
     <TR ALIGN='CENTER' BGCOLOR='#DBE5F1'><TD COLSPAN='4'><B>usage</B></TD></TR>
-<TR ALIGN='LEFT'>    <TD>actual_expansions=69866</TD>
+<TR ALIGN='LEFT'>    <TD>actual_expansions=68545</TD>
     <TD>bogomips=0</TD>
     <TD>bram18=0</TD>
     <TD>bram36=0</TD>
 </TR><TR ALIGN='LEFT'>    <TD>bufg=0</TD>
     <TD>bufr=0</TD>
-    <TD>ctrls=2</TD>
+    <TD>ctrls=1</TD>
     <TD>dsp=0</TD>
 </TR><TR ALIGN='LEFT'>    <TD>effort=2</TD>
-    <TD>estimated_expansions=3978</TD>
+    <TD>estimated_expansions=3060</TD>
     <TD>ff=3</TD>
     <TD>global_clocks=1</TD>
 </TR><TR ALIGN='LEFT'>    <TD>high_fanout_nets=0</TD>
     <TD>iob=4</TD>
-    <TD>lut=4</TD>
-    <TD>movable_instances=14</TD>
-</TR><TR ALIGN='LEFT'>    <TD>nets=17</TD>
-    <TD>pins=41</TD>
+    <TD>lut=2</TD>
+    <TD>movable_instances=11</TD>
+</TR><TR ALIGN='LEFT'>    <TD>nets=14</TD>
+    <TD>pins=34</TD>
     <TD>pll=0</TD>
     <TD>router_runtime=0.000000</TD>
 </TR><TR ALIGN='LEFT'>    <TD>router_timing_driven=1</TD>
@@ -213,7 +209,7 @@
     <TD>-seu_protect=default::none</TD>
     <TD>-sfcu=default::[not_specified]</TD>
     <TD>-shreg_min_size=default::3</TD>
-</TR><TR ALIGN='LEFT'>    <TD>-top=m3</TD>
+</TR><TR ALIGN='LEFT'>    <TD>-top=mealy_1010</TD>
     <TD>-verilog_define=default::[not_specified]</TD>
 </TR>   </TABLE>
    </TD></TR>
@@ -222,8 +218,8 @@
     <TR ALIGN='CENTER' BGCOLOR='#DBE5F1'><TD COLSPAN='4'><B>usage</B></TD></TR>
 <TR ALIGN='LEFT'>    <TD>elapsed=00:00:13s</TD>
     <TD>hls_ip=0</TD>
-    <TD>memory_gain=291.445MB</TD>
-    <TD>memory_peak=609.527MB</TD>
+    <TD>memory_gain=289.035MB</TD>
+    <TD>memory_peak=607.684MB</TD>
 </TR>   </TABLE>
    </TD></TR>
   </TABLE><BR>

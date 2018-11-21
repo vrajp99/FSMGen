@@ -1,0 +1,44 @@
+MACHINE_TYPE: Moore
+NAME: vedanta
+
+INPUT_SIZE: 1
+ENCODING: binary
+
+STATE_DESC:
+a gives 0
+b gives 0
+c gives 1
+d gives 0
+e gives 1
+f gives 1
+g gives 0
+h gives 1
+
+
+
+#These are the state transitions
+TRANSITION:
+
+a  to  d on 0
+a  to  c on 1
+
+b  to  f on 0
+b  to  h on 1
+
+c  to  e on 0
+c  to  d on 1
+
+d  to  a on 0
+d  to  e on 1
+
+e  to  c on 0
+e  to  a on 1
+
+f  to  f on 0
+f  to  b on 1
+
+g  to  b on 0
+g  to  h on 1
+
+h  to  c on 0
+h  to  g on 1

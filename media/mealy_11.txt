@@ -1,0 +1,20 @@
+MACHINE_TYPE: Mealy
+NAME: mealy_11
+
+INPUT_SIZE: 1
+ENCODING: binary
+
+STATE_DESC:
+a gives 
+b gives 
+
+
+
+#These are the state transitions
+TRANSITION:
+
+a  to  ['a', 0] on 0
+a  to  ['b', 0] on 1
+
+b  to  ['a', 0] on 0
+b  to  ['b', 1] on 1

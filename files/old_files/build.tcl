@@ -1,12 +1,12 @@
 set outputDir ./VivadoBuildOutput
 file mkdir $outputDir
 set_part xc7a35tcpg236-1
-read_verilog ./files/mealy_1010.v
+read_verilog ./files/m3.v
 #synthesis
-synth_design -top mealy_1010
+synth_design -top m3
 write_checkpoint -force $outputDir/post_synth
 #placement and logic optimization
-read_xdc ./files/constraints_mealy_1010.xdc
+read_xdc ./files/constraints_m3.xdc
 opt_design
 power_opt_design
 place_design

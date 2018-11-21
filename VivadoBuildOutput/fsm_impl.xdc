@@ -6,12 +6,12 @@
 
 
 ####################################################################################
-# Constraints from file : 'constraints_m3.xdc'
+# Constraints from file : 'constraints_mealy_1010.xdc'
 ####################################################################################
 
 set_property CLOCK_DEDICATED_ROUTE FALSE [get_nets clk_IBUF]
 
-set_property PACKAGE_PIN V16 [get_ports clk]
+set_property PACKAGE_PIN U18 [get_ports clk]
 set_property IOSTANDARD LVCMOS33 [get_ports clk]
 set_property PACKAGE_PIN U16 [get_ports O]
 set_property IOSTANDARD LVCMOS33 [get_ports O]
@@ -27,24 +27,20 @@ set_property CONFIG_MODE SPIx4 [current_design]
 
 # Vivado Generated physical constraints 
 
-set_property BEL B6LUT [get_cells {FSM_sequential_state[0]_i_1}]
 set_property BEL A6LUT [get_cells {FSM_sequential_state[1]_i_1}]
-set_property BEL BFF [get_cells {FSM_sequential_state_reg[0]}]
+set_property BEL A5FF [get_cells {FSM_sequential_state_reg[0]}]
 set_property BEL AFF [get_cells {FSM_sequential_state_reg[1]}]
 set_property BEL OUTBUF [get_cells O_OBUF_inst]
-set_property BEL AFF [get_cells O_reg]
-set_property BEL A6LUT [get_cells O_reg_i_1]
-set_property BEL B6LUT [get_cells O_reg_i_2]
+set_property BEL B6LUT [get_cells O_i_1]
+set_property BEL BFF [get_cells O_reg]
 set_property BEL INBUF_EN [get_cells clk_IBUF_inst]
 set_property BEL INBUF_EN [get_cells reset_IBUF_inst]
 set_property BEL INBUF_EN [get_cells w_IBUF_inst]
-set_property LOC SLICE_X0Y5 [get_cells {FSM_sequential_state[0]_i_1}]
-set_property LOC SLICE_X0Y5 [get_cells {FSM_sequential_state[1]_i_1}]
-set_property LOC SLICE_X0Y5 [get_cells {FSM_sequential_state_reg[0]}]
-set_property LOC SLICE_X0Y5 [get_cells {FSM_sequential_state_reg[1]}]
-set_property LOC SLICE_X1Y5 [get_cells O_reg]
-set_property LOC SLICE_X1Y5 [get_cells O_reg_i_1]
-set_property LOC SLICE_X1Y5 [get_cells O_reg_i_2]
+set_property LOC SLICE_X0Y11 [get_cells {FSM_sequential_state[1]_i_1}]
+set_property LOC SLICE_X0Y11 [get_cells {FSM_sequential_state_reg[0]}]
+set_property LOC SLICE_X0Y11 [get_cells {FSM_sequential_state_reg[1]}]
+set_property LOC SLICE_X0Y11 [get_cells O_i_1]
+set_property LOC SLICE_X0Y11 [get_cells O_reg]
 set_property LOC BUFGCTRL_X0Y0 [get_cells clk_IBUF_BUFG_inst]
 
 # Vivado Generated miscellaneous constraints 

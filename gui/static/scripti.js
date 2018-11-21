@@ -210,18 +210,6 @@ function display_d() {
     }
 }
 
-function display_t() {
-    var w = document.getElementById("test_bench");
-    if (w.innerText === "Add Constraints") {
-        document.getElementById("seq_constraints_container").style.display = "block";
-        w.innerText = "Remove Constraints";
-    }
-    else {
-        document.getElementById("seq_constraints_container").style.display = "none";
-        w.innerText = "Add Constraints";
-    }
-}
-
 function halwa(argument) {
     if (argument.slice(0, 6) === "BUTTON") {
         document.getElementById(argument.slice(6,)).placeholder = "M or L or R or U or D";

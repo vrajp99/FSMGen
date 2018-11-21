@@ -230,12 +230,129 @@ def binsizer(n):
     return len(bin(n)[2:])
 
 
+def comp(t1, t2):
+    if (t1[0] == t2[0] and t1[1] == t2[1]):
+        return 1
+    if (t1[0] == t2[1] and t1[1] == t2[0]):
+        return 1
+    return 0
+
+
+def replce(a, b, trans_matrix, type):
+    type = type.lower()
+    if type == "moore":
+        for i in range(len(trans_matrix)):
+            val = list(trans_matrix.values())[i]
+            for j in range(len(val)):
+                if (val[j] == a):
+                    val[j] = b
+        return trans_matrix
+    else:
+        for i in range(len(trans_matrix)):
+            val = list(trans_matrix.values())[i]
+            for j in range(len(val)):
+                if (val[j][0] == a):
+                    val[j][0] = b
+        return trans_matrix
+
+
+def rep(a, b, trans_matrix):
+    for i in range(len(trans_matrix)):
+        val = list(trans_matrix.keys())[i]
+        if (val == a):
+            val = b
+    return trans_matrix
+
+
+def Minimimiser(trans_matrix, out_dict, type):
+    type = type.lower()
+    if type == "mealy":
+        implication_chart = dict()
+        for i in range(1, len(trans_matrix.keys())):
+            for j in range(0, i):
+                if (list(trans_matrix.values())[i] == list(trans_matrix.values())[j]):
+                    pr1 = list(trans_matrix.keys())[i]
+                    pr2 = list(trans_matrix.keys())[j]
+                    tmp_dict = dict()
+                    for thi in range(len(trans_matrix[pr1])):
+                        tmp_dict[list(trans_matrix[pr1].keys())[thi]] = (
+                        list(trans_matrix[pr1].values())[thi], list(trans_matrix[pr2].values())[thi])
+                    # implication_chart[(pr1,pr2)]={0:(trans_matrix[pr1][0],trans_matrix[pr2][0]),1:(trans_matrix[pr1][1],trans_matrix[pr2][1])}
+                    implication_chart[(pr1, pr2)] = tmp_dict
+
+        l = len(implication_chart)
+
+        minimised = []
+        for i in range(l):
+            t1 = list(implication_chart.keys())[i]
+            t2 = implication_chart[t1][0]
+            t3 = implication_chart[t1][1]
+            if comp(t1, t2):
+                minimised.append(t2)
+            if comp(t1, t3):
+                minimised.append(t3)
+        for i in range(len(minimised)):
+            trans_matrix = replce(minimised[i][0], minimised[i][1], trans_matrix, type)
+        x = []
+        for i in range(len(list(trans_matrix.values()))):
+            for j in range(i + 1, len(list(trans_matrix.values()))):
+                if (list(trans_matrix.values())[i] == list(trans_matrix.values())[j]):
+                    x.append(list(trans_matrix.keys())[i])
+        for i in set(x):
+            trans_matrix.pop(i)
+        states = []
+        for i in out_dict:
+            if i in trans_matrix:
+                states.append(i)
+        return trans_matrix, states
+    else:
+        implication_chart = dict()
+        for i in range(1, len(out_dict.keys())):
+            for j in range(0, i):
+                if (list(out_dict.values())[i] == list(out_dict.values())[j]):
+                    pr1 = list(out_dict.keys())[i]
+                    pr2 = list(out_dict.keys())[j]
+                    tmp_dict = dict()
+                    for thi in range(len(trans_matrix[pr1])):
+                        tmp_dict[list(trans_matrix[pr1].keys())[thi]] = (
+                        list(trans_matrix[pr1].values())[thi], list(trans_matrix[pr2].values())[thi])
+                    # implication_chart[(pr1,pr2)]={0:(trans_matrix[pr1][0],trans_matrix[pr2][0]),1:(trans_matrix[pr1][1],trans_matrix[pr2][1])}
+                    implication_chart[(pr1, pr2)] = tmp_dict
+
+        l = len(implication_chart)
+
+        minimised = []
+        for i in range(l):
+            t1 = list(implication_chart.keys())[i]
+            t2 = implication_chart[t1][0]
+            t3 = implication_chart[t1][1]
+            if comp(t1, t2):
+                minimised.append(t2)
+            if comp(t1, t3):
+                minimised.append(t3)
+        for i in range(len(minimised)):
+            trans_matrix = replce(minimised[i][0], minimised[i][1], trans_matrix, type)
+        x = []
+        for i in range(len(list(trans_matrix.values()))):
+            for j in range(i + 1, len(list(trans_matrix.values()))):
+                if (list(trans_matrix.values())[i] == list(trans_matrix.values())[j] and list(out_dict.values())[i] ==
+                        list(out_dict.values())[j]):
+                    x.append(list(trans_matrix.keys())[i])
+        for i in set(x):
+            trans_matrix.pop(i)
+            out_dict.pop(i)
+        return trans_matrix, out_dict
+
+
 def file_dump(flname, content):
     with open('files/' + flname, 'w') as fl:
         fl.write(content)
 
 
 def makeMoore(modname, inp_size, state_output, states, transition_matrix, start, enc):
+    # transition_matrix, state_output = Minimimiser(transition_matrix, state_output, 'moore')
+    # print(state_output, transition_matrix)
+    # states = list(state_output.keys())
     parlist = []
     startname = ''
     numstates = len(states)
@@ -295,6 +412,8 @@ def makeMoore(modname, inp_size, state_output, states, transition_matrix, start,
 
 
 def makeMealy(modname, inp_size, states, transition_matrix, start, enc):
+    # transition_matrix, states = Minimimiser(transition_matrix, states, 'mealy')
+    # print(states, transition_matrix)
     parlist = []
     startname = ''
     numstates = len(states)
@@ -317,7 +436,7 @@ def makeMealy(modname, inp_size, states, transition_matrix, start, enc):
     sigparams.append(('output reg', ('' if binsizer(max_out) == 1 else '[' + str(binsizer(max_out) - 1) + ':0]') + 'O'))
     sigparams.append(('input', 'clk'))
     sigparams.append(('input', 'reset'))
-    enc= enc.upper()
+    enc = enc.upper()
     if enc not in {'ONEHOT', 'ONECOLD'}:
         sigparams.append(('reg', ('' if binsizer(numstates - 1) == 1 else '[' + str(
             binsizer(numstates - 1) - 1) + ':0]') + 'state'))
@@ -401,7 +520,7 @@ def makeFSM_file(**params):
         build = template_build.render(modname=modname, constraints=cons)
         file_dump("build.tcl", build)
         print('Build running')
-        s = subprocess.call(["vivado", "-mode", "batch", "-batch", "./files/build.tcl"], shell=True)
+        s = subprocess.call(["vivado", "-mode", "batch", "-source", "./files/build.tcl"], shell=True)
         print('Command run')
 
 
@@ -454,11 +573,13 @@ def testbench(modname, testin, inpsize):
 def index(request):
     return render(request, 'template_gui/gui.html', {})
 
-def easy(st,st1):
-    if st=="BUTTON":
-        return st +'_'+st1
+
+def easy(st, st1):
+    if st == "BUTTON":
+        return st + '_' + st1
     else:
         return st + st1
+
 
 @csrf_exempt
 def seq_det(request):
@@ -522,7 +643,7 @@ def seq_det(request):
         states = list(state_output.keys())
         start = states[0]
         transition_matrix = d
-        print(state_output, transition_matrix, constraint,enc)
+        print(state_output, transition_matrix, constraint, enc)
         makeMoore(name, inp_size, state_output, states, transition_matrix, start, enc)
     else:
         le = len(inp)
@@ -559,7 +680,7 @@ def seq_det(request):
         states = list(d.keys())
         transition_matrix = d
         start = states[0]
-        print(states, transition_matrix, constraint,enc)
+        print(states, transition_matrix, constraint, enc)
         makeMealy(name, inp_size, states, transition_matrix, start, enc)
     if tb != '':
         testbench(name, tb, inp_size)
@@ -632,7 +753,7 @@ def submit(request):
                 break
             if state not in transition:
                 transition[state] = {}
-            transition[state][inputi] = next_state
+            transition[state][int(inputi)] = next_state
             i += 1
     else:
         name = request.POST.get('mname')
@@ -671,7 +792,7 @@ def submit(request):
                 break
             if state not in transition:
                 transition[state] = {}
-            transition[state][inputi] = [next_state, int(output)]
+            transition[state][int(inputi)] = [next_state, int(output)]
             i += 1
     params = {'type': type, 'modname': name,
               'inp_size': input_size, 'enc': encoding,
