@@ -11,7 +11,6 @@ function func(str) {
         state_name.placeholder = "State Name";
         state_name.name = "state_name" + val;
         state_name.classList.add("form-control");
-        state_name.required = true;
         a.appendChild(state_name);
         var sp = document.createElement("span");
         sp.innerText = " gives ";
@@ -21,7 +20,6 @@ function func(str) {
         state_out.type = "text";
         state_out.placeholder = "State Output";
         state_out.name = "state_output" + val;
-        state_out.required = true;
         state_out.classList.add("form-control");
         a.appendChild(state_out);
         var cancel = document.createElement("button");
@@ -29,7 +27,7 @@ function func(str) {
         cancel.innerText = "Delete";
         cancel.setAttribute('name', "cancel" + val);
         cancel.setAttribute("onclick", "cancel('" + cancel.name + "')");
-        cancel.classList.add("btn", "btn-danger", "form-control", "ml-2" );
+        cancel.classList.add("btn", "btn-danger", "form-control", "ml-2");
         a.appendChild(cancel);
         w.appendChild(a);
     }
@@ -45,14 +43,13 @@ function func(str) {
         state_name.placeholder = "State Name";
         state_name.name = "mstate_name" + val;
         state_name.classList.add("form-control");
-        state_name.required = true;
         a.appendChild(state_name);
         var cancel = document.createElement("button");
         cancel.type = "button";
         cancel.innerText = "Delete";
         cancel.setAttribute('name', "mcancel" + val);
         cancel.setAttribute("onclick", "cancel('" + cancel.name + "')");
-        cancel.classList.add("btn", "btn-danger", "form-control", "ml-2" );
+        cancel.classList.add("btn", "btn-danger", "form-control", "ml-2");
         a.appendChild(cancel);
         w.appendChild(a);
     }
@@ -70,7 +67,6 @@ function funci(str) {
         state.type = "text";
         state.placeholder = "State Name";
         state.name = "state" + val;
-        state.required = true;
         state.classList.add("form-control");
         a.appendChild(state);
         var sp = document.createElement("span");
@@ -82,7 +78,6 @@ function funci(str) {
         next_state.placeholder = "Next State";
         next_state.name = "next_state" + val;
         next_state.classList.add("form-control");
-        next_state.required = true;
         a.appendChild(next_state);
         var spa = document.createElement("span");
         spa.innerText = " on ";
@@ -92,7 +87,6 @@ function funci(str) {
         input.type = "text";
         input.placeholder = "Input Value";
         input.name = "input" + val;
-        input.required = true;
         input.classList.add("form-control");
         a.appendChild(input);
         var cancel = document.createElement("button");
@@ -100,7 +94,7 @@ function funci(str) {
         cancel.innerText = "Delete";
         cancel.setAttribute('name', "tcancel" + val);
         cancel.setAttribute("onclick", "cancel('" + cancel.name + "')");
-        cancel.classList.add("btn", "btn-danger", "form-control", "ml-2" );
+        cancel.classList.add("btn", "btn-danger", "form-control", "ml-2");
         a.appendChild(cancel);
         w.appendChild(a);
     }
@@ -115,7 +109,6 @@ function funci(str) {
         state.type = "text";
         state.placeholder = "State Name";
         state.name = "mstate" + val;
-        state.required = true;
         state.classList.add("form-control");
         a.appendChild(state);
         var sp = document.createElement("span");
@@ -126,7 +119,6 @@ function funci(str) {
         next_state.type = "text";
         next_state.placeholder = "Next State";
         next_state.name = "mnext_state" + val;
-        next_state.required = true;
         next_state.classList.add("form-control");
         a.appendChild(next_state);
         var spa = document.createElement("span");
@@ -137,7 +129,6 @@ function funci(str) {
         input.type = "text";
         input.placeholder = "Input Value";
         input.name = "minput" + val;
-        input.required = true;
         input.classList.add("form-control");
         a.appendChild(input);
         var sp1 = document.createElement("span");
@@ -146,7 +137,6 @@ function funci(str) {
         a.appendChild(sp1);
         var output = document.createElement("input");
         output.type = "text";
-        output.required = true;
         output.placeholder = "Input Value";
         output.name = "moutput" + val;
         output.classList.add("form-control");
@@ -156,7 +146,7 @@ function funci(str) {
         cancel.innerText = "Delete";
         cancel.setAttribute('name', "tmcancel" + val);
         cancel.setAttribute("onclick", "cancel('" + cancel.name + "')");
-        cancel.classList.add("btn", "btn-danger", "form-control", "ml-2" );
+        cancel.classList.add("btn", "btn-danger", "form-control", "ml-2");
         a.appendChild(cancel);
         w.appendChild(a);
     }
@@ -206,4 +196,37 @@ function add_constraints() {
         doc.getElementByTagName("button").innerText = "Add Constraints";
     }
 
+}
+
+function display_d() {
+    var w = document.getElementById("display");
+    if (w.innerText === "Add Constraints") {
+        document.getElementById("seq_constraints_container").style.display = "block";
+        w.innerText = "Remove Constraints";
+    }
+    else {
+        document.getElementById("seq_constraints_container").style.display = "none";
+        w.innerText = "Add Constraints";
+    }
+}
+
+function display_t() {
+    var w = document.getElementById("test_bench");
+    if (w.innerText === "Add Constraints") {
+        document.getElementById("seq_constraints_container").style.display = "block";
+        w.innerText = "Remove Constraints";
+    }
+    else {
+        document.getElementById("seq_constraints_container").style.display = "none";
+        w.innerText = "Add Constraints";
+    }
+}
+
+function halwa(argument) {
+    if (argument.slice(0, 6) === "button") {
+        document.getElementById(argument.slice(6,)).placeholder = "M or L or R or T or D";
+    }
+    else {
+        document.getElementById(argument.slice(6,)).placeholder = "Number";
+    }
 }

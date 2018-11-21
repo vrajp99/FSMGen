@@ -1,0 +1,15 @@
+#-----------------------------------------------------------
+# Vivado v2018.2 (64-bit)
+# SW Build 2258646 on Thu Jun 14 20:03:12 MDT 2018
+# IP Build 2256618 on Thu Jun 14 22:10:49 MDT 2018
+# Start of session at: Wed Nov 21 12:33:15 2018
+# Process ID: 20408
+# Current directory: C:/Users/Kishen/Desktop/FSMGen/files
+# Command line: vivado.exe -mode tcl build.tcl
+# Log file: C:/Users/Kishen/Desktop/FSMGen/files/vivado.log
+# Journal file: C:/Users/Kishen/Desktop/FSMGen/files\vivado.jou
+#-----------------------------------------------------------
+open_project build.tcl
+ERROR: [Coretcl 2-155] Invalid project file name 'build.tcl'. File must have a valid Vivado project extension (.xpr/.ppr).
+Vivado% exit
+INFO: [Common 17-206] Exiting Vivado at Wed Nov 21 12:36:25 2018...

@@ -1,0 +1,19 @@
+#-----------------------------------------------------------
+# Vivado v2018.2 (64-bit)
+# SW Build 2258646 on Thu Jun 14 20:03:12 MDT 2018
+# IP Build 2256618 on Thu Jun 14 22:10:49 MDT 2018
+# Start of session at: Wed Nov 21 12:49:43 2018
+# Process ID: 21540
+# Current directory: C:/Users/Kishen/Desktop/FSMGen/files
+# Command line: vivado.exe -mode batch -source build.tcl
+# Log file: C:/Users/Kishen/Desktop/FSMGen/files/vivado.log
+# Journal file: C:/Users/Kishen/Desktop/FSMGen/files\vivado.jou
+#-----------------------------------------------------------
+source build.tcl
+# set outputDir ./VivadoBuildOutput
+# file mkdir $outputDir
+# set_part xc7a35tcpg236-1
+INFO: [Coretcl 2-1500] The part has been set to 'xc7a35tcpg236-1' for the current project only. Run set_part -help for more details. To evaluate different speed grades in the current design, use the set_speed_grade command, or use the open_checkpoint -part command to change the part used by an existing checkpoint design.
+# read_verilog .v
+ERROR: [Common 17-69] Command failed: File 'C:/Users/Kishen/Desktop/FSMGen/files/.v' does not exist
+INFO: [Common 17-206] Exiting Vivado at Wed Nov 21 12:49:49 2018...

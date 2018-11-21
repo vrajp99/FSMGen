@@ -3,6 +3,7 @@ from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt
 from jinja2 import FileSystemLoader, Environment
 from django.core.files.storage import FileSystemStorage
+import subprocess
 
 parser = Lark('''
 	?start: (block)+
@@ -16,6 +17,7 @@ parser = Lark('''
 		| startstate
 		| encode_type
         | sigdesc
+        | test
 	startstate: "START:"i IDENTIFIER _NEWLINE
 	name: "NAME:"i IDENTIFIER _NEWLINE
 	encode_type: "ENCODING:"i (BIN|GRAY|OHOT|OCOLD) _NEWLINE
@@ -45,7 +47,22 @@ parser = Lark('''
     IDENTIFIER1: /[A-Z_a-z]([A-Za-z0-9_])*(\\[[0-9]+\\])?/
     sigdesc: "CONSTRAINTS:"i _NEWLINE (sig)+
     sig: "connect" IDENTIFIER1 "with" IDENTIFIER1 _NEWLINE
+    IDENTIFIER2: /[0-1]+/
+    test: "TESTBENCH:"i _NEWLINE (testing)+ _NEWLINE
+    testing: IDENTIFIER2
 	
+	''')
+
+parser1 = Lark('''
+	?start: (sigdesc)+
+	sigdesc: "connect" IDENTIFIER "with" IDENTIFIER _NEWLINE
+	WHITESPACE: " " | "\\t"
+	IDENTIFIER: /[A-Z_a-z]([A-Za-z0-9_])*(\\[[0-9]+\\])?/
+	COMMENT: "#" /[^\\n]*/ _NEWLINE
+	_NEWLINE: /[\\r\\n]+/
+	%ignore WHITESPACE
+	%ignore COMMENT
+
 	''')
 
 env = Environment(
@@ -58,6 +75,7 @@ template_caseinput = env.get_template('caseinput')
 template_caseinput_mealy = env.get_template('caseinputmealy')
 template_fileinput = env.get_template('input_file')
 template_constraint = env.get_template('constraints')
+template_build = env.get_template('build')
 
 defination_dict = {"LED0": "U16", "LED1": "E19", "LED2": "U19", "LED3": "V19", "LED4": "W18", "LED5": "U15",
                    "LED6": "U14", "LED7": "V14", "LED8": "V13", "LED9": "V3", "LED10": "W3", "LED11": "U3",
@@ -143,6 +161,26 @@ class FSMTransfomer(Transformer):
     def sig(self, match):
         return [str(match[0]), str(match[1])]
 
+    def testing(self, match):
+        return str(match[0])
+
+    def test(self, matches):
+        dct = ''
+        for match in matches:
+            dct += match + ' '
+        return 'Testing', dct
+
+
+class FSMTransfomer1(Transformer):
+    def start(self, matches):
+        dct = {}
+        for match in matches:
+            dct[match[0]] = match[1]
+        return dct
+
+    def sigdesc(self, matches):
+        return str(matches[0]), str(matches[1])
+
 
 def getifthere(dct, property, default=None):
     return dct[property] if property in dct else default
@@ -193,12 +231,8 @@ def binsizer(n):
 
 
 def file_dump(flname, content):
-    with open(flname, 'w') as fl:
+    with open('files/' + flname, 'w') as fl:
         fl.write(content)
-
-
-def index(request):
-    return render(request, 'template_gui/gui.html', {})
 
 
 def makeMoore(modname, inp_size, state_output, states, transition_matrix, start, enc):
@@ -343,7 +377,7 @@ def makeFSM_file(**params):
     typ = getifthere(params, 'Type', 'MOORE')
     enc = getifthere(params, 'Encoding', 'BINARY')
     constraint = getifthere(params, 'Constraints')
-    print(constraint)
+    test_in = getifthere(params, 'Testing')
     if typ == "MOORE":
         inp_size = getifthere(params, 'Isize', 8)
         state_output = params['States']
@@ -357,11 +391,19 @@ def makeFSM_file(**params):
         states = params['States']
         start = getifthere(params, 'Start', list(transition_matrix.keys())[0])
         makeMealy(modname, inp_size, states, transition_matrix, start, enc)
+    if test_in:
+        testbench(modname, test_in, inp_size)
     if constraint:
-        make_constraints(constraint)
+        make_constraints(constraint, modname)
+        cons = "constraints_" + modname
+        build = template_build.render(modname=modname, constraints=cons)
+        file_dump("build.tcl", build)
+        print('Build running')
+        s = subprocess.call(["vivado", "-mode", "batch", "-source", "./files/build.tcl"], shell=True)
+        print('Command run')
 
 
-def make_constraints(res):
+def make_constraints(res, name):
     s = ""
     s += r"""set_property CLOCK_DEDICATED_ROUTE FALSE [get_nets clk_IBUF]
 """
@@ -373,10 +415,10 @@ set_property BITSTREAM.CONFIG.CONFIGRATE 33 [current_design]
 set_property CONFIG_MODE SPIx4 [current_design]
     """
     print(s)
-    file_dump('constraints.xdc', s)
+    file_dump('constraints_' + name + '.xdc', s)
 
 
-def testbench(modname, testin):
+def testbench(modname, testin, inpsize):
     code = ''
     code += "`timescale 1ns/1ps\n"
     code += "module tb_" + str(modname) + "();\n"
@@ -388,8 +430,16 @@ def testbench(modname, testin):
     code += "reset=1;w=0;\n#1 clk=0;\n"
     code += "#9 reset=0;\n"
     code += '''$monitor($time, , ,"clk=%b",clk,,"O=%b",O,,"reset=%b",reset,,"w=%b",w);\n'''
-    for i in testin:
-        code += "#10 w=" + i + ";\n"
+    le = len(testin)
+    length = le // (inpsize)
+    lis = testin.split()
+    for i in lis:
+        if len(i) == inpsize:
+            code += "#10 w=" + str(inpsize) + '\'b' + i + ";\n"
+        elif len(i) > inpsize:
+            code += "#10 w=" + str(inpsize) + '\'b' + i[:inpsize] + ";\n"
+        else:
+            code += "#10 w=" + str(inpsize) + '\'b' + '0' * (inpsize - len(i)) + i + ";\n"
     code += "end\n"
     code += "always\n"
     code += "#5 clk=~clk;\n"
@@ -397,6 +447,10 @@ def testbench(modname, testin):
     code += "#100 $finish ;\n"
     code += "endmodule\n"
     file_dump("tb_" + modname + '.v', code)
+
+
+def index(request):
+    return render(request, 'template_gui/gui.html', {})
 
 
 @csrf_exempt
@@ -488,10 +542,9 @@ def seq_det(request):
         states = list(d.keys())
         transition_matrix = d
         start = states[0]
-        # so this prints the state description
         makeMealy(name, inp_size, states, transition_matrix, start, enc)
-    if tb!='':
-        testbench(name, tb)
+    if tb != '':
+        testbench(name, tb, inp_size)
     return redirect(request.META['HTTP_REFERER'])
 
 
@@ -606,4 +659,23 @@ def submit(request):
     fil.write(myfi)
     fil.close()
     makeFSM_gui(params)
+    if type == "Moore":
+        test_in = request.POST.get("test_in")
+        constraints = request.POST.get("constraints")
+    else:
+        test_in = request.POST.get("mtest_in")
+        constraints = request.POST.get("mconstraints")
+    if test_in != "":
+        testbench(name, test_in, input_size)
+    if constraints != "":
+        constraints += '\n'
+        tree = parser1.parse(constraints)
+        res1 = FSMTransfomer1().transform(tree)
+        make_constraints(res1, name)
+        cons = "constraints_" + name
+        build = template_build.render(modname=name, constraints=cons)
+        file_dump("build.tcl", build)
+        print('Build running')
+        s = subprocess.call(["vivado", "-mode", "tcl", "-batch", "./files/build.tcl"], shell=True)
+        print('Command run')
     return redirect(request.META['HTTP_REFERER'])
