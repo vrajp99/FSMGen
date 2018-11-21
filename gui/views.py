@@ -79,8 +79,8 @@ template_build = env.get_template('build')
 
 defination_dict = {"LED0": "U16", "LED1": "E19", "LED2": "U19", "LED3": "V19", "LED4": "W18", "LED5": "U15",
                    "LED6": "U14", "LED7": "V14", "LED8": "V13", "LED9": "V3", "LED10": "W3", "LED11": "U3",
-                   "LED12": "P3", "LED13": "N3", "LED14": "P1", "LED15": "L1", "MIDDLE_BUTTON": "U18",
-                   "DOWN_BUTTON": "U17", "LEFT_BUTTON": "W19", "RIGHT_BUTTON": "T17", "UP_BUTTON": "T18",
+                   "LED12": "P3", "LED13": "N3", "LED14": "P1", "LED15": "L1", "BUTTON_M": "U18",
+                   "BUTTON_D": "U17", "BUTTON_L": "W19", "BUTTON_R": "T17", "BUTTON_U": "T18",
                    "SWITCH0": "V17", "SWITCH1": "V16", "SWITCH2": "W16", "SWITCH3": "W17", "SWITCH4": "W15",
                    "SWITCH5": "V15", "SWITCH6": "W14", "SWITCH7": "W13", "SWITCH8": "V2", "SWITCH9": "T3",
                    "SWITCH10": "T2", "SWITCH11": "R3", "SWITCH12": "W2", "SWITCH13": "U1", "SWITCH14": "T1",
@@ -255,6 +255,7 @@ def makeMoore(modname, inp_size, state_output, states, transition_matrix, start,
     sigparams.append(('output reg', ('' if binsizer(max_out) == 1 else '[' + str(binsizer(max_out) - 1) + ':0]') + 'O'))
     sigparams.append(('input', 'clk'))
     sigparams.append(('input', 'reset'))
+    enc = enc.upper()
     if enc not in {'ONEHOT', 'ONECOLD'}:
         sigparams.append(
             ('reg',
@@ -316,6 +317,7 @@ def makeMealy(modname, inp_size, states, transition_matrix, start, enc):
     sigparams.append(('output reg', ('' if binsizer(max_out) == 1 else '[' + str(binsizer(max_out) - 1) + ':0]') + 'O'))
     sigparams.append(('input', 'clk'))
     sigparams.append(('input', 'reset'))
+    enc= enc.upper()
     if enc not in {'ONEHOT', 'ONECOLD'}:
         sigparams.append(('reg', ('' if binsizer(numstates - 1) == 1 else '[' + str(
             binsizer(numstates - 1) - 1) + ':0]') + 'state'))
@@ -399,7 +401,7 @@ def makeFSM_file(**params):
         build = template_build.render(modname=modname, constraints=cons)
         file_dump("build.tcl", build)
         print('Build running')
-        s = subprocess.call(["vivado", "-mode", "batch", "-source", "./files/build.tcl"], shell=True)
+        s = subprocess.call(["vivado", "-mode", "batch", "-batch", "./files/build.tcl"], shell=True)
         print('Command run')
 
 
@@ -452,6 +454,11 @@ def testbench(modname, testin, inpsize):
 def index(request):
     return render(request, 'template_gui/gui.html', {})
 
+def easy(st,st1):
+    if st=="BUTTON":
+        return st +'_'+st1
+    else:
+        return st + st1
 
 @csrf_exempt
 def seq_det(request):
@@ -463,6 +470,15 @@ def seq_det(request):
     seq_type = request.POST.get("seq_type")
     enc = request.POST.get("enc")
     tb = request.POST.get("tb")
+    constraint = {}
+    clk = easy(request.POST.get("clk"), request.POST.get("clk_no"))
+    rst = easy(request.POST.get("reset"), request.POST.get("rst_no"))
+    input_pin = easy(request.POST.get("input_pin"), request.POST.get("inp_no"))
+    output_pin = "LED" + request.POST.get("out_no")
+    constraint['clk'] = clk
+    constraint['O'] = output_pin
+    constraint['reset'] = rst
+    constraint['w'] = input_pin
     inp_size = 1
     if type == 'moore':
         d = {}
@@ -506,6 +522,7 @@ def seq_det(request):
         states = list(state_output.keys())
         start = states[0]
         transition_matrix = d
+        print(state_output, transition_matrix, constraint,enc)
         makeMoore(name, inp_size, state_output, states, transition_matrix, start, enc)
     else:
         le = len(inp)
@@ -542,9 +559,18 @@ def seq_det(request):
         states = list(d.keys())
         transition_matrix = d
         start = states[0]
+        print(states, transition_matrix, constraint,enc)
         makeMealy(name, inp_size, states, transition_matrix, start, enc)
     if tb != '':
         testbench(name, tb, inp_size)
+    if len(constraint):
+        make_constraints(constraint, name)
+        cons = "constraints_" + name
+        build = template_build.render(modname=name, constraints=cons)
+        file_dump("build.tcl", build)
+        print('Build running')
+        s = subprocess.call(["vivado", "-mode", "batch", "-source", "./files/build.tcl"], shell=True)
+        print('Command run')
     return redirect(request.META['HTTP_REFERER'])
 
 
@@ -676,6 +702,6 @@ def submit(request):
         build = template_build.render(modname=name, constraints=cons)
         file_dump("build.tcl", build)
         print('Build running')
-        s = subprocess.call(["vivado", "-mode", "tcl", "-batch", "./files/build.tcl"], shell=True)
+        s = subprocess.call(["vivado", "-mode", "batch", "-source", "./files/build.tcl"], shell=True)
         print('Command run')
     return redirect(request.META['HTTP_REFERER'])

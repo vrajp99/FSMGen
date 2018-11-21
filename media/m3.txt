@@ -1,0 +1,24 @@
+MACHINE_TYPE: Moore
+NAME: m3
+
+INPUT_SIZE: 1
+ENCODING: binary
+
+STATE_DESC:
+a gives 0
+b gives 0
+c gives 1
+
+
+
+#These are the state transitions
+TRANSITION:
+
+a  to  a on 0
+a  to  b on 1
+
+b  to  a on 0
+b  to  c on 1
+
+c  to  c on 1
+c  to  a on 0

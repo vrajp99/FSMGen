@@ -1,0 +1,60 @@
+MACHINE_TYPE: Moore
+NAME: m4
+
+INPUT_SIZE: 2
+ENCODING: gray
+
+STATE_DESC:
+a gives 0
+b gives 0
+c gives 0
+d gives 0
+e gives 1
+f gives 1
+g gives 1
+h gives 1
+
+
+
+#These are the state transitions
+TRANSITION:
+
+a  to  a on 0
+a  to  b on 1
+a  to  d on 2
+a  to  a on 3
+
+b  to  a on 0
+b  to  b on 1
+b  to  d on 2
+b  to  c on 3
+
+c  to  a on 0
+c  to  b on 1
+c  to  d on 2
+c  to  c on 3
+
+d  to  a on 0
+d  to  f on 1
+d  to  d on 2
+d  to  e on 3
+
+e  to  g on 0
+e  to  f on 1
+e  to  h on 2
+e  to  e on 3
+
+f  to  g on 0
+f  to  f on 1
+f  to  h on 2
+f  to  c on 3
+
+g  to  g on 0
+g  to  f on 1
+g  to  h on 2
+g  to  e on 3
+
+h  to  g on 0
+h  to  b on 1
+h  to  h on 2
+h  to  e on 3

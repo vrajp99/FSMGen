@@ -2,10 +2,10 @@
 # Vivado v2018.2 (64-bit)
 # SW Build 2258646 on Thu Jun 14 20:03:12 MDT 2018
 # IP Build 2256618 on Thu Jun 14 22:10:49 MDT 2018
-# Start of session at: Wed Nov 21 13:11:47 2018
-# Process ID: 18708
+# Start of session at: Wed Nov 21 14:27:36 2018
+# Process ID: 19816
 # Current directory: C:/Users/Kishen/Desktop/FSMGen
-# Command line: vivado.exe -mode tcl -source ./files/build.tcl
+# Command line: vivado.exe -mode batch -source ./files/build.tcl
 # Log file: C:/Users/Kishen/Desktop/FSMGen/vivado.log
 # Journal file: C:/Users/Kishen/Desktop/FSMGen\vivado.jou
 #-----------------------------------------------------------

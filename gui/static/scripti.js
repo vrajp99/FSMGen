@@ -223,8 +223,8 @@ function display_t() {
 }
 
 function halwa(argument) {
-    if (argument.slice(0, 6) === "button") {
-        document.getElementById(argument.slice(6,)).placeholder = "M or L or R or T or D";
+    if (argument.slice(0, 6) === "BUTTON") {
+        document.getElementById(argument.slice(6,)).placeholder = "M or L or R or U or D";
     }
     else {
         document.getElementById(argument.slice(6,)).placeholder = "Number";

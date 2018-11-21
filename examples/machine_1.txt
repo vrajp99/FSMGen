@@ -20,7 +20,7 @@ Testbench:
 0 1 0 1 0 1 1 1 0 1 0 1 
 
 Constraints:
-connect clk with MIDDLE_BUTTON
+connect clk with BUTTON_M
 connect O with LED0
-connect reset with RIGHT_BUTTON
+connect reset with BUTTON_R
 connect w with SWITCH0

@@ -1,12 +1,12 @@
 set outputDir ./VivadoBuildOutput
 file mkdir $outputDir
 set_part xc7a35tcpg236-1
-read_verilog ./files/psk_sarma.v
+read_verilog ./files/m3.v
 #synthesis
-synth_design -top psk_sarma
+synth_design -top m3
 write_checkpoint -force $outputDir/post_synth
 #placement and logic optimization
-read_xdc ./files/constraints_psk_sarma.xdc
+read_xdc ./files/constraints_m3.xdc
 opt_design
 power_opt_design
 place_design
